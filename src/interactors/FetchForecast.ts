@@ -1,9 +1,8 @@
 
-// const debug = require('debug')('ournet-places');
+// const debug = require('debug')('ournet-weather');
 
 import { UseCase } from '@ournet/domain';
-import { HourlyReport, DetailsReport } from '../entities';
-import { DailyReport } from '../entities/Report';
+import { HourlyReport, DetailsReport, DailyReport } from '../entities';
 
 export interface FetchForecastParams {
     latitude: number

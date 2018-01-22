@@ -1,4 +1,5 @@
 import { ForecastIcon } from './icon';
+import { DateTime } from './common';
 
 export type DataPoint = DailyDataPoint | HourlyDataPoint | HoursDataPoint;
 
@@ -16,7 +17,7 @@ export interface BaseDataPoint {
     pressure?: number
     // summary?: string
     temperature: number
-    time: Date
+    time: DateTime
     uvIndex?: number
     visibility?: number
     windBearing?: number
@@ -34,26 +35,26 @@ export interface HoursDataPoint extends BaseDataPoint {
 
     apparentTemperature?: number
     apparentTemperatureHigh?: number
-    apparentTemperatureHighTime?: Date
+    apparentTemperatureHighTime?: DateTime
     apparentTemperatureLow?: number
-    apparentTemperatureLowTime?: Date
+    apparentTemperatureLowTime?: DateTime
 
     precipIntensityMax?: number
-    precipIntensityMaxTime?: Date
+    precipIntensityMaxTime?: DateTime
 
     temperatureHigh?: number
-    temperatureHighTime?: Date
+    temperatureHighTime?: DateTime
     temperatureLow?: number
-    temperatureLowTime?: Date
+    temperatureLowTime?: DateTime
 
-    uvIndexTime?: Date
+    uvIndexTime?: DateTime
 }
 
 export interface DailyDataPoint extends HoursDataPoint {
     moonPhase?: number
 
-    sunriseTime?: Date
-    sunsetTime?: Date
+    sunriseTime?: DateTime
+    sunsetTime?: DateTime
 }
 
 export enum PrecipTypeEnum {

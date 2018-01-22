@@ -1,5 +1,5 @@
 import { PrecipTypeEnum, HoursDataPoint, BaseDataPoint, HourlyDataPoint, DailyDataPoint } from './DataPoint';
-import { GeoPoint, ForecastTimePeriod, ForecastUnits } from './common';
+import { GeoPoint, ForecastTimePeriod, ForecastUnits, DateTime } from './common';
 import { DailyDataBlock } from './DataBlock';
 import { ForecastIcon } from './icon';
 import { DetailsReport, DailyReport, ForecastReportID } from './Report';
@@ -46,7 +46,7 @@ export class ForecastHelpers {
 
         let currentData: HoursDataPoint[] = [];
         const dataByDays = data.reduce<DailyDataPoint[]>((result, current) => {
-            if (currentData.length && currentData[currentData.length - 1].time.getDate() !== current.time.getDate()) {
+            if (currentData.length && currentData[currentData.length - 1].time.day !== current.time.day) {
                 result.push(ForecastHelpers.dailyDataPoint(currentData, geoPoint));
                 currentData = [];
             } else {
@@ -67,13 +67,13 @@ export class ForecastHelpers {
         }
         const dayDataPoint = <DailyDataPoint>ForecastHelpers.hoursDataPoint(data);
 
-        const date = dayDataPoint.time;
+        const date = dayDataPoint.time.toJSDate();
 
         const sun = ForecastHelpers.getSun(date, geoPoint);
         const moon = ForecastHelpers.getMoon(date);
 
-        dayDataPoint.sunriseTime = sun.sunrise;
-        dayDataPoint.sunsetTime = sun.sunset;
+        dayDataPoint.sunriseTime = DateTime.fromJSDate(sun.sunrise, { zone: dayDataPoint.time.zoneName });
+        dayDataPoint.sunsetTime = DateTime.fromJSDate(sun.sunset, { zone: dayDataPoint.time.zoneName });
         dayDataPoint.moonPhase = moon.phase;
 
         return dayDataPoint;
@@ -111,7 +111,7 @@ export class ForecastHelpers {
         let pressure = 0;
         let uvIndex = 0;
         let uvIndexMax = 0;
-        let uvIndexTime: Date;
+        let uvIndexTime: DateTime;
         let visibility = 0;
         let windGust = 0;
         let windSpeed = 0;
@@ -119,7 +119,7 @@ export class ForecastHelpers {
         let dewPoint = 0;
         let temperature = 0;
 
-        const tempData: { high: number, highTime: Date, low: number, lowTime: Date }
+        const tempData: { high: number, highTime: DateTime, low: number, lowTime: DateTime }
             = data.reduce((prev, current) => {
                 const high = (<HoursDataPoint>current).temperatureHigh;
                 // has interval high
