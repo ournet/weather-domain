@@ -1,4 +1,4 @@
-import { PrecipTypeEnum, HoursDataPoint, BaseDataPoint, HourlyDataPoint, DailyDataPoint } from './DataPoint';
+import { PrecipTypeEnum, HoursDataPoint, BaseDataPoint, HourlyDataPoint, DailyDataPoint, DataPoint } from './DataPoint';
 import { GeoPoint, ForecastTimePeriod, ForecastUnits, DateTime } from './common';
 import { DailyDataBlock } from './DataBlock';
 import { ForecastIcon } from './icon';
@@ -142,7 +142,7 @@ export class ForecastHelpers {
                         prev.lowTime = (<HoursDataPoint>current).temperatureLowTime;
                     }
                 } else {
-                    if (current.temperature < prev.high) {
+                    if (current.temperature < prev.low) {
                         prev.low = current.temperature;
                         prev.lowTime = current.time;
                     }
@@ -226,7 +226,60 @@ export class ForecastHelpers {
 
         };
 
-        return dataPoint;
+        return ForecastHelpers.normalizeDataPoint(dataPoint);
+    }
+
+    static normalizeDataPoint(point: DataPoint): DataPoint {
+        const data: DataPoint = { ...point };
+
+        for (let prop in data) {
+            if (~[null, undefined].indexOf((<any>data)[prop])) {
+                delete (<any>data)[prop];
+            }
+        }
+
+        if (data.cloudCover) {
+            data.cloudCover = parseFloat(data.cloudCover.toFixed(2));
+        }
+        if (data.dewPoint) {
+            data.dewPoint = parseFloat(data.dewPoint.toFixed(1));
+        }
+        if (data.humidity) {
+            data.humidity = parseFloat(data.humidity.toFixed(2));
+        }
+        if (data.precipAccumulation) {
+            data.precipAccumulation = parseFloat(data.precipAccumulation.toFixed(1));
+        }
+        if (data.precipIntensity) {
+            data.precipIntensity = parseFloat(data.precipIntensity.toFixed(1));
+        }
+        if (data.precipProbability) {
+            data.precipProbability = parseFloat(data.precipProbability.toFixed(1));
+        }
+        if (data.pressure) {
+            data.pressure = parseFloat(data.pressure.toFixed(1));
+        }
+        if (data.temperature) {
+            data.temperature = parseFloat(data.temperature.toFixed(1));
+        }
+        if (data.uvIndex) {
+            data.uvIndex = parseFloat(data.uvIndex.toFixed(1));
+        }
+        if (data.visibility) {
+            data.visibility = parseFloat(data.visibility.toFixed(2));
+        }
+        if (data.windBearing) {
+            data.windBearing = parseFloat(data.windBearing.toFixed(1));
+        }
+        if (data.windGust) {
+            data.windGust = parseFloat(data.windGust.toFixed(1));
+        }
+        if (data.windSpeed) {
+            data.windSpeed = parseInt(data.windGust.toString());
+        }
+
+
+        return data;
     }
 
     static mostPopularIcon(data: BaseDataPoint[]): ForecastIcon {
