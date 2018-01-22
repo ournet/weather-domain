@@ -100,7 +100,7 @@ export class ForecastHelpers {
         }
         const firstData = data[0];
         // const lastData = data[data.length - 1];
-        const middleData = data[Math.round(data.length / 2)];
+        const middleData = data[parseInt((data.length / 2).toString())];
 
         let cloudCover = 0;
         let humidity = 0;
@@ -278,6 +278,10 @@ export class ForecastHelpers {
             data.windSpeed = parseInt(data.windGust.toString());
         }
 
+        if ((<DailyDataPoint>data).moonPhase) {
+            (<DailyDataPoint>data).moonPhase = parseFloat((<DailyDataPoint>data).moonPhase.toFixed(2));
+        }
+
 
         return data;
     }
@@ -287,7 +291,7 @@ export class ForecastHelpers {
             throw new Error(`'data' must be a not empty array`);
         }
         const popularity: { [index: string]: number } = {};
-        let mostPopularIcon: ForecastIcon = data[Math.round(data.length / 2)].icon;
+        let mostPopularIcon: ForecastIcon = data[parseInt((data.length / 2).toString())].icon;
         let mostPopularIconCount = 1;
 
         data.forEach(item => {
