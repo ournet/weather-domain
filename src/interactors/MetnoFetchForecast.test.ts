@@ -13,7 +13,7 @@ const point = {
 
 test('valid Report', async t => {
     const result = await fetcher.execute(point);
-    console.log(ForecastHelpers.dailyReport(result.details).data);
+    // console.log(ForecastHelpers.dailyReport(result.details).data);
     t.is(!!result, true, 'result exists');
     t.is(result.hourly.data.data.length, 24, '24 hourly');
 });

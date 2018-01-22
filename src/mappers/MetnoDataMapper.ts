@@ -1,3 +1,6 @@
+
+const debug = require('debug')('weather-domain');
+
 import { HourlySegment, DetailsSegment } from "../entities/Report";
 import { TimezoneGeoPoint, ForecastUnits, ForecastTimePeriod, DateTime } from "../entities/common";
 import { HourlyDataPoint, HoursDataPoint } from "../entities/DataPoint";
@@ -51,33 +54,7 @@ export class MetnoDataMapper {
             longitude: hourly.longitude,
             timezone: hourly.timezone,
             units: ForecastUnits.SI,
-            data: null,
-        };
-
-        let hourlyList: HourlyDataPoint[] = []
-        const detailsList: HoursDataPoint[] = [];
-        let lastItem: HourlyDataPoint = null;
-
-        hourly.data.data.forEach(item => {
-            if (lastItem && ~[0, 6, 12, 18].indexOf(item.time.hour)) {
-                const hoursItem = ForecastHelpers.hoursDataPoint(hourlyList);
-                detailsList.push(hoursItem);
-                hourlyList = [];
-            }
-            hourlyList.push(item);
-            lastItem = item;
-        });
-
-        if (hourlyList.length) {
-            const hoursItem = ForecastHelpers.hoursDataPoint(hourlyList);
-            detailsList.push(hoursItem);
-        }
-
-        segment.data = {
-            icon: ForecastHelpers.mostPopularIcon(detailsList),
-            data: detailsList,
-            night: detailsList[parseInt((detailsList.length / 2).toString())].night,
-            period: ForecastTimePeriod.HOURLY,
+            data: ForecastHelpers.detailsDataBlock(hourly.data.data),
         };
 
         return segment;
