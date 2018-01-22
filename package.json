@@ -37,14 +37,14 @@
   "homepage": "https://github.com/Ournet/weather-domain",
   "dependencies": {
     "@ournet/domain": "^0.1.4",
-    "joi": "12.0.0",
-    "luxon": "^0.3.1"
+    "luxon": "^0.3.1",
+    "suncalc": "^1.8.0"
   },
   "devDependencies": {
-    "@types/joi": "^13.0.0",
     "@types/luxon": "^0.2.3",
     "@types/node": "^8.x.x",
     "ava": "^0.23.0",
+    "debug": "^3.1.0",
     "typescript": "^2.6.1"
   }
 }

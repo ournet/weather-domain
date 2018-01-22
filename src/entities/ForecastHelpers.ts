@@ -2,7 +2,7 @@ import { PrecipTypeEnum, HoursDataPoint, BaseDataPoint, HourlyDataPoint, DailyDa
 import { GeoPoint, ForecastTimePeriod, ForecastUnits, DateTime } from './common';
 import { DailyDataBlock } from './DataBlock';
 import { ForecastIcon } from './icon';
-import { DetailsReport, DailyReport, ForecastReportID } from './Report';
+import { DetailsSegment, DailySegment, ForecastReportID } from './Report';
 
 const SunCalc = require('suncalc');
 
@@ -20,9 +20,9 @@ export class ForecastHelpers {
         return `${id.latitude.toFixed(1)}_${id.longitude.toFixed(1)}`;
     }
 
-    static dailyReport(detailsReport: DetailsReport): DailyReport {
+    static dailyReport(detailsReport: DetailsSegment): DailySegment {
 
-        const report: DailyReport = {
+        const report: DailySegment = {
             longitude: detailsReport.longitude,
             latitude: detailsReport.latitude,
             timezone: detailsReport.timezone,

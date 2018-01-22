@@ -3,7 +3,7 @@ import { DataPoint, DailyDataPoint, HourlyDataPoint, HoursDataPoint } from './Da
 import { ForecastIcon } from './icon';
 import { ForecastTimePeriod } from './common';
 
-export type DataBlock = DailyDataBlock | HourlyDataBlock | HoursDataBlock;
+export type DataBlock = DailyDataBlock | HourlyDataBlock | DetailsDataBlock;
 
 export interface BaseDataBlock {
     period: ForecastTimePeriod
@@ -13,7 +13,7 @@ export interface BaseDataBlock {
     data: DataPoint[]
 }
 
-export interface HoursDataBlock extends BaseDataBlock {
+export interface DetailsDataBlock extends BaseDataBlock {
     period: ForecastTimePeriod.HOURLY
     data: HoursDataPoint[]
 }

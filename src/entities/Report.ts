@@ -1,5 +1,5 @@
 
-import { BaseDataBlock, HoursDataBlock, HourlyDataBlock, DailyDataBlock } from './DataBlock';
+import { BaseDataBlock, DetailsDataBlock, HourlyDataBlock, DailyDataBlock } from './DataBlock';
 import { ForecastUnits } from './common';
 
 export type ForecastReportID = {
@@ -7,16 +7,33 @@ export type ForecastReportID = {
     longitude: number
 }
 
-export interface DailyReport extends ForecastReport<DailyDataBlock> {
+export interface ForecastReport {
+    latitude: number
+    longitude: number
+    units: ForecastUnits
+    timezone: string
+
+    hourly?: HourlyDataBlock
+    details?: DetailsDataBlock
+    daily?: DetailsDataBlock
 }
 
-export interface DetailsReport extends ForecastReport<HoursDataBlock> {
+export enum ReportSegments {
+    Hourly = 'hourly',
+    Details = 'details',
+    Daily = 'daily',
 }
 
-export interface HourlyReport extends ForecastReport<HourlyDataBlock> {
+export interface DailySegment extends ReportSegment<DailyDataBlock> {
 }
 
-export interface ForecastReport<T extends BaseDataBlock> {
+export interface DetailsSegment extends ReportSegment<DetailsDataBlock> {
+}
+
+export interface HourlySegment extends ReportSegment<HourlyDataBlock> {
+}
+
+export interface ReportSegment<T extends BaseDataBlock> {
     latitude: number
     longitude: number
     units: ForecastUnits

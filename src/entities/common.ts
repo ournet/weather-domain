@@ -12,6 +12,10 @@ export interface GeoPoint {
     longitude: number
 }
 
+export interface TimezoneGeoPoint extends GeoPoint {
+    timezone: string
+}
+
 export enum ForecastUnits {
     SI = 'si'
 }
