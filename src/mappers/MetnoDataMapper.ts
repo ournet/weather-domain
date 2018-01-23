@@ -78,8 +78,6 @@ export class MetnoDataMapper {
             windSpeed: item.windSpeed && item.windSpeed.mps,
         };
 
-        console.log('wind speed',item.windSpeed, data.windSpeed)
-
         return data;
     }
 

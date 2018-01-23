@@ -285,7 +285,7 @@ export class ForecastHelpers {
             data.windGust = parseFloat(data.windGust.toFixed(1));
         }
         if (data.windSpeed) {
-            data.windSpeed = parseInt(data.windGust.toString());
+            data.windSpeed = parseFloat(data.windSpeed.toFixed(1));
         }
 
         if ((<DailyDataPoint>data).moonPhase) {
