@@ -4,7 +4,7 @@ import { PrecipTypeEnum, HoursDataPoint, BaseDataPoint, HourlyDataPoint, DailyDa
 import { GeoPoint, ForecastTimePeriod, ForecastUnits, DateTime } from './common';
 import { DailyDataBlock, HoursDataBlock } from './DataBlock';
 import { ForecastIcon } from './icon';
-import { DetailsSegment, DailySegment, ForecastReportID } from './Report';
+import { DetailsSegment, DailySegment, ForecastReportID, BaseForecastReport, ReportType } from './Report';
 
 const SunCalc = require('suncalc');
 
@@ -17,24 +17,29 @@ export class ForecastHelpers {
         }
     }
 
-    static stringReportId(id: ForecastReportID): string {
-        id = ForecastHelpers.normalizeReportId(id);
-        return `${id.latitude.toFixed(1)}_${id.longitude.toFixed(1)}`;
+    static hourlyStringReportId(id: ForecastReportID) {
+        return ForecastHelpers.stringReportId(id, ReportType.Hourly);
+    }
+    static detailsStringReportId(id: ForecastReportID) {
+        return ForecastHelpers.stringReportId(id, ReportType.Details);
     }
 
-    static dailyReport(detailsReport: DetailsSegment): DailySegment {
-
-        const report: DailySegment = {
-            longitude: detailsReport.longitude,
-            latitude: detailsReport.latitude,
-            timezone: detailsReport.timezone,
-            units: detailsReport.units,
-            data: null,
-        };
-
-        report.data = ForecastHelpers.dailyDataBlock(detailsReport.data.data, detailsReport);
-
-        return report;
+    static stringReportId(id: ForecastReportID, type: ReportType): string {
+        let prefix = '';
+        switch (type) {
+            case ReportType.Hourly:
+                prefix = 'HLY';
+                break;
+            case ReportType.Details:
+                prefix = 'DTL';
+                break;
+            // case ReportType.Daily:
+            //     prefix = 'DLY';
+            //     break;
+            default: throw new Error(`Invalid report type ${type}`);
+        }
+        id = ForecastHelpers.normalizeReportId(id);
+        return `${prefix}_${id.latitude.toFixed(1)}_${id.longitude.toFixed(1)}`;
     }
 
     static dailyDataBlock(data: BaseDataPoint[], geoPoint: GeoPoint): DailyDataBlock {
@@ -248,7 +253,7 @@ export class ForecastHelpers {
                 delete (<any>data)[prop];
             } else {
                 const property = getDataPointProperty(prop);
-                if(!property){
+                if (!property) {
                     debug('no property ', prop);
                 }
                 if (property.min && value < property.min) {

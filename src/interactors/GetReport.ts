@@ -28,11 +28,12 @@ export class GetReport extends UseCase<TimezoneGeoPoint, ForecastReport, void>{
         }
 
         const normalId = ForecastHelpers.normalizeReportId(params);
-        const id = ForecastHelpers.stringReportId(normalId);
+        const hourlyId = ForecastHelpers.hourlyStringReportId(normalId);
+        const detailsId = ForecastHelpers.detailsStringReportId(normalId);
 
         const props: { [prop: string]: Promise<ReportData> } = {
-            details: this.detailsRepository.getById(id),
-            hourly: this.hourlyRepository.getById(id),
+            details: this.detailsRepository.getById(detailsId),
+            hourly: this.hourlyRepository.getById(hourlyId),
         };
 
         return promiseProps(props).then((results: any) => {
@@ -46,7 +47,9 @@ export class GetReport extends UseCase<TimezoneGeoPoint, ForecastReport, void>{
             }
             if (details && details.expiresAt.getTime() > Date.now()) {
                 report.details = DataBlockMinifier.toDetails(details.data);
-                report.hourly = DataBlockMinifier.toDetails(hourly.data);
+                report.hourly = DataBlockMinifier.toHourly(hourly.data);
+
+                report.daily = ForecastHelpers.dailyDataBlock(report.details.data, report);
 
                 return report;
             }
@@ -61,6 +64,7 @@ export class GetReport extends UseCase<TimezoneGeoPoint, ForecastReport, void>{
                     }
                     report.details = newReport.details.data;
                     report.hourly = newReport.hourly.data;
+                    report.daily = ForecastHelpers.dailyDataBlock(report.details.data, report);
 
                     const putDetails = this.detailsRepository.put(ReportDataMapper.fromDetailsSegment(newReport.details));
                     const putHourly = this.hourlyRepository.put(ReportDataMapper.fromHourlySegment(newReport.hourly));

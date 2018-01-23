@@ -7,18 +7,20 @@ export type ForecastReportID = {
     longitude: number
 }
 
-export interface ForecastReport {
+export interface BaseForecastReport {
     latitude: number
     longitude: number
     units: ForecastUnits
     timezone: string
-
-    hourly?: HourlyDataBlock
-    details?: HoursDataBlock
-    daily?: HoursDataBlock
 }
 
-export enum ReportSegments {
+export interface ForecastReport extends BaseForecastReport {
+    hourly?: HourlyDataBlock
+    details?: HoursDataBlock
+    daily?: DailyDataBlock
+}
+
+export enum ReportType {
     Hourly = 'hourly',
     Details = 'details',
     Daily = 'daily',

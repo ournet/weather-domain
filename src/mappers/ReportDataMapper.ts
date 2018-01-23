@@ -10,7 +10,7 @@ export class ReportDataMapper {
         return {
             expiresAt: new Date(Date.now() + DETAILS_REPORT_EXPIRES_IN_HOURS * 60 * 60 * 1000),
             createdAt: new Date(),
-            id: ForecastHelpers.stringReportId(segment),
+            id: ForecastHelpers.detailsStringReportId(segment),
             units: segment.units,
             data: DataBlockMinifier.fromDetails(segment.data),
         }
@@ -20,7 +20,7 @@ export class ReportDataMapper {
         return {
             expiresAt: new Date(Date.now() + HOURLY_REPORT_EXPIRES_IN_HOURS * 60 * 60 * 1000),
             createdAt: new Date(),
-            id: ForecastHelpers.stringReportId(segment),
+            id: ForecastHelpers.hourlyStringReportId(segment),
             units: segment.units,
             data: DataBlockMinifier.fromHourly(segment.data),
         }
