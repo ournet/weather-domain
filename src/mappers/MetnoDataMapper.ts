@@ -1,12 +1,11 @@
 
-const debug = require('debug')('weather-domain');
+// const debug = require('debug')('weather-domain');
 
-import { HourlySegment, DetailsSegment } from "../entities/Report";
-import { TimezoneGeoPoint, ForecastUnits, ForecastTimePeriod, DateTime } from "../entities/common";
+import { TimezoneGeoPoint } from "../entities/common";
 import { HourlyDataPoint, HoursDataPoint } from "../entities/DataPoint";
 import { ForecastIcon } from "../entities/icon";
 import { EntityHelpers } from "../entities/EntityHelpers";
-import { HourlyDataBlock, HoursDataBlock } from "../entities/DataBlock";
+import { HourlyDataBlock } from "../entities/DataBlock";
 
 
 export class MetnoDataMapper {
@@ -20,10 +19,10 @@ export class MetnoDataMapper {
 
         hours = hours || 300;
 
-        const SECONDS_IN_A_DAY = 86400;
-
         for (let i = 0; i < hours && i < input.length; i++) {
-            if (i === 0 || Math.trunc(list[list.length - 1].time / SECONDS_IN_A_DAY) !== Math.trunc(input[i].time / SECONDS_IN_A_DAY)) {
+            if (i === 0 ||
+                EntityHelpers.unixTimeToZoneDate(list[list.length - 1].time, params.timezone).getDate()
+                !== EntityHelpers.unixTimeToZoneDate(input[i].time, params.timezone).getDate()) {
                 sun = EntityHelpers.getSun(new Date(input[i].time * 1000), params);
             }
             const item = MetnoDataMapper.parseHourlyDataPoint(input[i], sun);

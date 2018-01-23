@@ -2,7 +2,7 @@
 // const debug = require('debug')('ournet-weather');
 
 import { UseCase } from '@ournet/domain';
-import { HourlySegment, DetailsSegment, TimezoneGeoPoint, HourlyDataBlock, HoursDataBlock } from '../entities';
+import { TimezoneGeoPoint, HourlyDataBlock, HoursDataBlock } from '../entities';
 import { ForecastUnits } from '../entities/common';
 
 /**

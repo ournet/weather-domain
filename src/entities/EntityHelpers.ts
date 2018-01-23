@@ -1,10 +1,11 @@
 
 const debug = require('debug')('weather-data');
-import { PrecipTypeEnum, HoursDataPoint, BaseDataPoint, HourlyDataPoint, DailyDataPoint, DataPoint, DayPeriodName, getDataPointProperty } from './DataPoint';
-import { GeoPoint, ForecastTimePeriod, ForecastUnits, DateTime } from './common';
+import { PrecipTypeEnum, HoursDataPoint, BaseDataPoint, HourlyDataPoint, DailyDataPoint, DataPoint, getDataPointProperty } from './DataPoint';
+import { GeoPoint, ForecastUnits } from './common';
 import { DailyDataBlock, HoursDataBlock } from './DataBlock';
 import { ForecastIcon } from './icon';
-import { DetailsSegment, DailySegment, ForecastReportID, BaseForecastReport, ReportType } from './Report';
+import { ForecastReportID, BaseForecastReport, ReportType } from './Report';
+import { DateTime } from 'luxon';
 
 const SunCalc = require('suncalc');
 
@@ -52,7 +53,7 @@ export class EntityHelpers {
             data: null
         };
 
-        const dataByDays = EntityHelpers.splitByDay(data).map(item => EntityHelpers.dailyDataPoint(item, report));
+        const dataByDays = EntityHelpers.splitByDay(data, report.timezone).map(item => EntityHelpers.dailyDataPoint(item, report));
 
         dailyDataBlock.data = dataByDays;
 
@@ -101,8 +102,12 @@ export class EntityHelpers {
         };
     }
 
-    static toTimeZoneDate(date: Date, timezone: string): Date {
+    static dateToZoneDate(date: Date, timezone: string): Date {
         return DateTime.fromJSDate(date, { zone: timezone }).toJSDate();
+    }
+
+    static unixTimeToZoneDate(time: number, timezone: string): Date {
+        return DateTime.fromMillis(time * 1000, { zone: timezone }).toJSDate();
     }
 
     static getMoon(date: Date): { fraction: number, phase: number } {
@@ -136,7 +141,6 @@ export class EntityHelpers {
         let visibility = 0;
         let windGust = 0;
         let windSpeed = 0;
-        let hours = 0;
         let dewPoint = 0;
         let temperature = 0;
 
@@ -347,14 +351,14 @@ export class EntityHelpers {
         return data;
     }
 
-    static splitByDay(data: BaseDataPoint[]) {
+    static splitByDay(data: BaseDataPoint[], timezone: string) {
         const list: HoursDataPoint[][] = [];
         let currentData: HoursDataPoint[] = [];
 
-        const SECONDS_IN_A_DAY = 86400;
-
         data.forEach(item => {
-            if (currentData.length && Math.trunc(currentData[currentData.length - 1].time / SECONDS_IN_A_DAY) !== Math.trunc(item.time / SECONDS_IN_A_DAY)) {
+            if (currentData.length &&
+                EntityHelpers.unixTimeToZoneDate(currentData[currentData.length - 1].time, timezone).getDate()
+                !== EntityHelpers.unixTimeToZoneDate(item.time, timezone).getDate()) {
                 list.push(currentData);
                 currentData = [];
             }

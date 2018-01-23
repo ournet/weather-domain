@@ -1,5 +1,5 @@
 import { EntityHelpers } from "./entities/EntityHelpers";
-import { ForecastReportID, ReportType } from "./entities/Report";
+import { ForecastReportID } from "./entities/Report";
 import { GeoPoint, ForecastIcon, ForecastUnits } from "./entities";
 import { BaseDataPoint } from "./entities/DataPoint";
 
@@ -12,20 +12,12 @@ export class ForecastHelpers {
         return EntityHelpers.normalizeReportId(id);
     }
 
-    static hourlyStringReportId(id: ForecastReportID) {
-        return EntityHelpers.stringReportId(id, ReportType.Hourly);
-    }
-
-    static detailsStringReportId(id: ForecastReportID) {
-        return EntityHelpers.stringReportId(id, ReportType.Details);
-    }
-
     static getSun(date: Date, geoPoint: GeoPoint): { sunrise: number, sunset: number } {
         return EntityHelpers.getSun(date, geoPoint);
     }
 
-    static toTimeZoneDate(date: Date, timezone: string): Date {
-        return EntityHelpers.toTimeZoneDate(date, timezone);
+    static dateToZoneDate(date: Date, timezone: string): Date {
+        return EntityHelpers.dateToZoneDate(date, timezone);
     }
 
     static getMoon(date: Date): { fraction: number, phase: number } {

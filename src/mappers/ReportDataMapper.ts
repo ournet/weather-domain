@@ -1,11 +1,10 @@
 
-import { DetailsSegment, HourlySegment, BaseForecastReport } from '../entities/Report';
+import { BaseForecastReport } from '../entities/Report';
 import { ReportData } from '../entities/ReportData';
 import { DataBlockMinifier } from './DataBlockMinifier';
 import { EntityHelpers } from '../entities/EntityHelpers';
 import { DETAILS_REPORT_EXPIRES_IN_HOURS, HOURLY_REPORT_EXPIRES_IN_HOURS } from '../utils';
 import { HoursDataBlock, HourlyDataBlock } from '../entities/DataBlock';
-import { GeoPoint } from '../entities/common';
 
 export class ReportDataMapper {
     static fromDetails(segment: HoursDataBlock, report: BaseForecastReport): ReportData {

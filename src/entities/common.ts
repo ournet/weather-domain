@@ -1,6 +1,3 @@
-import { DateTime } from 'luxon';
-
-export { DateTime }
 
 export enum ForecastTimePeriod {
     DAILY = 'daily',

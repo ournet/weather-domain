@@ -2,7 +2,6 @@
 import { MetnoFetchForecast } from './MetnoFetchForecast';
 
 import test from 'ava';
-import { EntityHelpers } from '../entities/EntityHelpers';
 
 const fetcher = new MetnoFetchForecast();
 const point = {

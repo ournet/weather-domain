@@ -3,5 +3,5 @@ export { DataPoint, PrecipTypeEnum, DailyDataPoint, HourlyDataPoint, HoursDataPo
 export { DataBlock, DailyDataBlock, HourlyDataBlock, HoursDataBlock } from './DataBlock';
 export { ForecastIcon } from './icon';
 export { ForecastTimePeriod, ForecastUnits, GeoPoint, TimezoneGeoPoint } from './common';
-export { DailySegment, DetailsSegment, HourlySegment, ForecastReport } from './Report';
+export { ForecastReport, ForecastReportID } from './Report';
 export { ReportData } from './ReportData';

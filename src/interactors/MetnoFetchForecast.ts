@@ -5,8 +5,8 @@ var xml2js = require('xml2js');
 import fetch from 'node-fetch';
 
 import { FetchForecast, FetchForecastResult } from './FetchForecast';
-import { HourlySegment, DetailsSegment, TimezoneGeoPoint } from '../entities';
-import { GeoPoint, ForecastUnits, DateTime } from '../entities/common';
+import { TimezoneGeoPoint } from '../entities';
+import { GeoPoint, ForecastUnits } from '../entities/common';
 import { MetnoDataMapper } from '../mappers/MetnoDataMapper';
 import { EntityHelpers } from '../entities/EntityHelpers';
 import { HourlyDataBlock } from '../entities/DataBlock';
