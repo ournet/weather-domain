@@ -1,4 +1,4 @@
-# weather-domain
+# @ournet/weather-domain
 
 Domain layer for Ournet weather.
 

@@ -39,13 +39,8 @@ export class GetReport extends UseCase<TimezoneGeoPoint, ForecastReport, void>{
         return promiseProps(props).then((results: any) => {
             const details: ReportData = results.details;
             const hourly: ReportData = results.hourly;
-            if (details && !hourly) {
-                throw new Error(`Fatal: Details report exists and Hourly not!`)
-            }
-            if (!details && hourly) {
-                throw new Error(`Fatal: Hourly report exists and Details not!`)
-            }
-            if (details && details.expiresAt.getTime() > Date.now()) {
+            
+            if (hourly && details && details.expiresAt.getTime() > Date.now()) {
                 report.details = DataBlockMinifier.toDetails(details.data);
                 report.hourly = DataBlockMinifier.toHourly(hourly.data);
 
