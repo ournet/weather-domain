@@ -1,5 +1,4 @@
 import { ForecastIcon } from './icon';
-import { DateTime } from './common';
 
 export type DataPoint = DailyDataPoint | HourlyDataPoint | HoursDataPoint;
 
@@ -17,7 +16,7 @@ export interface BaseDataPoint {
     pressure?: number
     // summary?: string
     temperature: number
-    time: DateTime
+    time: number
     uvIndex?: number
     visibility?: number
     windBearing?: number
@@ -42,26 +41,26 @@ export interface HoursDataPoint extends BaseDataPoint {
     // period: DayPeriodName,
     apparentTemperature?: number
     apparentTemperatureHigh?: number
-    apparentTemperatureHighTime?: DateTime
+    apparentTemperatureHighTime?: number
     apparentTemperatureLow?: number
-    apparentTemperatureLowTime?: DateTime
+    apparentTemperatureLowTime?: number
 
     precipIntensityMax?: number
-    precipIntensityMaxTime?: DateTime
+    precipIntensityMaxTime?: number
 
     temperatureHigh?: number
-    temperatureHighTime?: DateTime
+    temperatureHighTime?: number
     temperatureLow?: number
-    temperatureLowTime?: DateTime
+    temperatureLowTime?: number
 
-    uvIndexTime?: DateTime
+    uvIndexTime?: number
 }
 
 export interface DailyDataPoint extends HoursDataPoint {
     moonPhase?: number
 
-    sunriseTime?: DateTime
-    sunsetTime?: DateTime
+    sunriseTime?: number
+    sunsetTime?: number
 }
 
 export enum PrecipTypeEnum {
@@ -142,7 +141,6 @@ const BASE_DATA_POINT_PROPS: { [prop: string]: DataPointProperty } = {
     temperature: {
         id: 'T',
         type: 'number',
-        min: 1,
     },
     time: {
         id: 't',
@@ -167,6 +165,7 @@ const BASE_DATA_POINT_PROPS: { [prop: string]: DataPointProperty } = {
     windGust: {
         id: 'Wg',
         type: 'number',
+        min: 0.1,
     },
     windSpeed: {
         id: 'Ws',
@@ -192,12 +191,10 @@ export const HOURS_DATA_POINT_PROPS: { [prop: string]: DataPointProperty }
         apparentTemperature: {
             id: 'aT',
             type: 'number',
-            min: 1,
         },
         apparentTemperatureHigh: {
             id: 'aTh',
             type: 'number',
-            min: 1,
         },
         apparentTemperatureHighTime: {
             id: 'aTht',
@@ -206,7 +203,6 @@ export const HOURS_DATA_POINT_PROPS: { [prop: string]: DataPointProperty }
         apparentTemperatureLow: {
             id: 'aTl',
             type: 'number',
-            min: 1,
         },
         apparentTemperatureLowTime: {
             id: 'aTlt',
@@ -226,7 +222,6 @@ export const HOURS_DATA_POINT_PROPS: { [prop: string]: DataPointProperty }
         temperatureHigh: {
             id: 'Th',
             type: 'number',
-            min: 1,
         },
         temperatureHighTime: {
             id: 'Tht',
@@ -235,7 +230,6 @@ export const HOURS_DATA_POINT_PROPS: { [prop: string]: DataPointProperty }
         temperatureLow: {
             id: 'Tl',
             type: 'number',
-            min: 1,
         },
         temperatureLowTime: {
             id: 'Tlt',

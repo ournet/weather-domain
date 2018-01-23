@@ -2,7 +2,7 @@
 const debug = require('debug')('weather-domain');
 
 import { UseCase } from '@ournet/domain';
-import { TimezoneGeoPoint, ForecastHelpers, ForecastReport } from '../entities';
+import { TimezoneGeoPoint, ForecastReport } from '../entities';
 import { FetchForecast } from './FetchForecast';
 import { IReportRepository } from './ReportRepository';
 import { ForecastUnits } from '../entities/common';
@@ -10,6 +10,7 @@ import { promiseProps } from '../utils';
 import { ReportData } from '../entities/ReportData';
 import { DataBlockMinifier } from '../mappers/DataBlockMinifier';
 import { ReportDataMapper } from '../mappers/ReportDataMapper';
+import { EntityHelpers } from '../entities/EntityHelpers';
 
 export class GetReport extends UseCase<TimezoneGeoPoint, ForecastReport, void>{
     constructor(protected detailsRepository: IReportRepository,
@@ -27,9 +28,9 @@ export class GetReport extends UseCase<TimezoneGeoPoint, ForecastReport, void>{
             units: ForecastUnits.SI,
         }
 
-        const normalId = ForecastHelpers.normalizeReportId(params);
-        const hourlyId = ForecastHelpers.hourlyStringReportId(normalId);
-        const detailsId = ForecastHelpers.detailsStringReportId(normalId);
+        const normalId = EntityHelpers.normalizeReportId(params);
+        const hourlyId = EntityHelpers.hourlyStringReportId(normalId);
+        const detailsId = EntityHelpers.detailsStringReportId(normalId);
 
         const props: { [prop: string]: Promise<ReportData> } = {
             details: this.detailsRepository.getById(detailsId),
@@ -44,7 +45,7 @@ export class GetReport extends UseCase<TimezoneGeoPoint, ForecastReport, void>{
                 report.details = DataBlockMinifier.toDetails(details.data);
                 report.hourly = DataBlockMinifier.toHourly(hourly.data);
 
-                report.daily = ForecastHelpers.dailyDataBlock(report.details.data, report);
+                report.daily = EntityHelpers.dailyDataBlock(report.details.data, report);
 
                 return report;
             }
@@ -59,7 +60,7 @@ export class GetReport extends UseCase<TimezoneGeoPoint, ForecastReport, void>{
                     }
                     report.details = newReport.details;
                     report.hourly = newReport.hourly;
-                    report.daily = ForecastHelpers.dailyDataBlock(report.details.data, report);
+                    report.daily = EntityHelpers.dailyDataBlock(report.details.data, report);
 
                     const putDetails = this.detailsRepository.put(ReportDataMapper.fromDetails(newReport.details, report));
                     const putHourly = this.hourlyRepository.put(ReportDataMapper.fromHourly(newReport.hourly, report));

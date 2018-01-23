@@ -8,7 +8,7 @@ import { DetailsSegment, DailySegment, ForecastReportID, BaseForecastReport, Rep
 
 const SunCalc = require('suncalc');
 
-export class ForecastHelpers {
+export class EntityHelpers {
 
     static normalizeReportId(id: ForecastReportID): ForecastReportID {
         return {
@@ -18,10 +18,10 @@ export class ForecastHelpers {
     }
 
     static hourlyStringReportId(id: ForecastReportID) {
-        return ForecastHelpers.stringReportId(id, ReportType.Hourly);
+        return EntityHelpers.stringReportId(id, ReportType.Hourly);
     }
     static detailsStringReportId(id: ForecastReportID) {
-        return ForecastHelpers.stringReportId(id, ReportType.Details);
+        return EntityHelpers.stringReportId(id, ReportType.Details);
     }
 
     static stringReportId(id: ForecastReportID, type: ReportType): string {
@@ -38,40 +38,40 @@ export class ForecastHelpers {
             //     break;
             default: throw new Error(`Invalid report type ${type}`);
         }
-        id = ForecastHelpers.normalizeReportId(id);
+        id = EntityHelpers.normalizeReportId(id);
         return `${prefix}_${id.latitude.toFixed(1)}_${id.longitude.toFixed(1)}`;
     }
 
-    static dailyDataBlock(data: BaseDataPoint[], geoPoint: GeoPoint): DailyDataBlock {
+    static dailyDataBlock(data: BaseDataPoint[], report: BaseForecastReport): DailyDataBlock {
         if (!data.length) {
             throw new Error(`'data' must be a not empty array`);
         }
 
         const dailyDataBlock: DailyDataBlock = {
-            icon: ForecastHelpers.mostPopularIcon(data),
+            icon: EntityHelpers.mostPopularIcon(data),
             data: null
         };
 
-        const dataByDays = ForecastHelpers.splitByDay(data).map(item => ForecastHelpers.dailyDataPoint(item, geoPoint));
+        const dataByDays = EntityHelpers.splitByDay(data).map(item => EntityHelpers.dailyDataPoint(item, report));
 
         dailyDataBlock.data = dataByDays;
 
         return dailyDataBlock;
     }
 
-    static dailyDataPoint(data: HourlyDataPoint[], geoPoint: GeoPoint): DailyDataPoint {
+    static dailyDataPoint(data: HourlyDataPoint[], report: BaseForecastReport): DailyDataPoint {
         if (!data.length) {
             throw new Error(`'data' must be a not empty array`);
         }
-        const dayDataPoint = <DailyDataPoint>ForecastHelpers.hoursDataPoint(data);
+        const dayDataPoint = <DailyDataPoint>EntityHelpers.hoursDataPoint(data);
 
-        const date = dayDataPoint.time.toJSDate();
+        const date = new Date(dayDataPoint.time);
 
-        const sun = ForecastHelpers.getSun(date, geoPoint);
-        const moon = ForecastHelpers.getMoon(date);
+        const sun = EntityHelpers.getSun(date, report);
+        const moon = EntityHelpers.getMoon(date);
 
-        dayDataPoint.sunriseTime = DateTime.fromJSDate(sun.sunrise, { zone: dayDataPoint.time.zoneName });
-        dayDataPoint.sunsetTime = DateTime.fromJSDate(sun.sunset, { zone: dayDataPoint.time.zoneName });
+        dayDataPoint.sunriseTime = sun.sunrise;
+        dayDataPoint.sunsetTime = sun.sunset;
         dayDataPoint.moonPhase = parseFloat(moon.phase.toFixed(2));
 
         return dayDataPoint;
@@ -83,19 +83,26 @@ export class ForecastHelpers {
         }
 
         const dataBlock: HoursDataBlock = {
-            icon: ForecastHelpers.mostPopularIcon(data),
+            icon: EntityHelpers.mostPopularIcon(data),
             data: null
         };
 
-        dataBlock.data = ForecastHelpers.splitByDayPeriod(data).map(item => ForecastHelpers.hoursDataPoint(item));
+        dataBlock.data = EntityHelpers.splitByDayPeriod(data).map(item => EntityHelpers.hoursDataPoint(item));
 
         return dataBlock;
     }
 
-    static getSun(date: Date, geoPoint: GeoPoint): { sunrise: Date, sunset: Date } {
+    static getSun(date: Date, geoPoint: GeoPoint): { sunrise: number, sunset: number } {
         const times = SunCalc.getTimes(date, geoPoint.latitude, geoPoint.longitude);
 
-        return { sunrise: times.sunrise, sunset: times.sunset };
+        return {
+            sunrise: Math.trunc(times.sunrise.getTime() / 1000),
+            sunset: Math.trunc(times.sunset.getTime() / 1000)
+        };
+    }
+
+    static toTimeZoneDate(date: Date, timezone: string): Date {
+        return DateTime.fromJSDate(date, { zone: timezone }).toJSDate();
     }
 
     static getMoon(date: Date): { fraction: number, phase: number } {
@@ -125,7 +132,7 @@ export class ForecastHelpers {
         let pressure = 0;
         let uvIndex = 0;
         let uvIndexMax = 0;
-        let uvIndexTime: DateTime;
+        let uvIndexTime: number;
         let visibility = 0;
         let windGust = 0;
         let windSpeed = 0;
@@ -133,17 +140,17 @@ export class ForecastHelpers {
         let dewPoint = 0;
         let temperature = 0;
 
-        const tempData: { high: number, highTime: DateTime, low: number, lowTime: DateTime }
+        const tempData: { high: number, highTime: number, low: number, lowTime: number }
             = data.reduce((prev, current) => {
                 const high = (<HoursDataPoint>current).temperatureHigh;
                 // has interval high
                 if (high) {
-                    if (high > prev.high) {
+                    if (prev.high === null || high > prev.high) {
                         prev.high = high;
                         prev.highTime = (<HoursDataPoint>current).temperatureHighTime;
                     }
                 } else {
-                    if (current.temperature > prev.high) {
+                    if (prev.high === null || current.temperature > prev.high) {
                         prev.high = current.temperature;
                         prev.highTime = current.time;
                     }
@@ -151,12 +158,12 @@ export class ForecastHelpers {
                 const low = (<HoursDataPoint>current).temperatureLow;
                 // has interval low
                 if (low) {
-                    if (prev.low == null || low < prev.low) {
+                    if (prev.low === null || low < prev.low) {
                         prev.low = low;
                         prev.lowTime = (<HoursDataPoint>current).temperatureLowTime;
                     }
                 } else {
-                    if (prev.low == null || current.temperature < prev.low) {
+                    if (prev.low === null || current.temperature < prev.low) {
                         prev.low = current.temperature;
                         prev.lowTime = current.time;
                     }
@@ -183,7 +190,7 @@ export class ForecastHelpers {
                 }
             }
             pressure += (item.pressure || 0);
-            temperature += (item.temperature || 0);
+            temperature += item.temperature;
             uvIndex += (item.uvIndex || 0);
             if (uvIndexMax < item.uvIndex) {
                 uvIndexMax = item.uvIndex;
@@ -212,7 +219,7 @@ export class ForecastHelpers {
         const dataPoint: HoursDataPoint = {
             // period: ForecastHelpers.getDayPeriod(firstData.time),
             time: firstData.time,
-            icon: ForecastHelpers.mostPopularIcon(data),
+            icon: EntityHelpers.mostPopularIcon(data),
             temperature: temperature,
             temperatureHigh: tempData.high, // highTempData.temperature,
             temperatureHighTime: tempData.highTime, // highTempData.time,
@@ -241,7 +248,7 @@ export class ForecastHelpers {
 
         };
 
-        return ForecastHelpers.normalizeDataPoint(dataPoint) as HoursDataPoint;
+        return EntityHelpers.normalizeDataPoint(dataPoint) as HoursDataPoint;
     }
 
     static normalizeDataPoint(point: DataPoint): DataPoint {
@@ -343,8 +350,11 @@ export class ForecastHelpers {
     static splitByDay(data: BaseDataPoint[]) {
         const list: HoursDataPoint[][] = [];
         let currentData: HoursDataPoint[] = [];
+
+        const SECONDS_IN_A_DAY = 86400;
+
         data.forEach(item => {
-            if (currentData.length && currentData[currentData.length - 1].time.day !== item.time.day) {
+            if (currentData.length && Math.trunc(currentData[currentData.length - 1].time / SECONDS_IN_A_DAY) !== Math.trunc(item.time / SECONDS_IN_A_DAY)) {
                 list.push(currentData);
                 currentData = [];
             }
@@ -363,7 +373,7 @@ export class ForecastHelpers {
         const list: HoursDataPoint[][] = [];
         let currentData: HoursDataPoint[] = [];
         data.forEach(item => {
-            if (currentData.length && ~[0, 6, 12, 18].indexOf(item.time.toUTC().hour)) {
+            if (currentData.length && ~[0, 6, 12, 18].indexOf(new Date(item.time * 1000).getUTCHours())) {
                 list.push(currentData);
                 currentData = [];
             }
@@ -393,7 +403,7 @@ export class ForecastHelpers {
     //     return DayPeriodName.Evening;
     // }
 
-    static isNight(date: Date, sun: { sunrise: Date, sunset: Date }) {
-        return !(date > sun.sunrise && date < sun.sunset);
+    static isNight(time: number, sun: { sunrise: number, sunset: number }) {
+        return !(time > sun.sunrise && time < sun.sunset);
     }
 }

@@ -6,23 +6,23 @@ import fetch from 'node-fetch';
 
 import { FetchForecast, FetchForecastResult } from './FetchForecast';
 import { HourlySegment, DetailsSegment, TimezoneGeoPoint } from '../entities';
-import { GeoPoint, ForecastUnits } from '../entities/common';
+import { GeoPoint, ForecastUnits, DateTime } from '../entities/common';
 import { MetnoDataMapper } from '../mappers/MetnoDataMapper';
-import { ForecastHelpers } from '../entities/ForecastHelpers';
+import { EntityHelpers } from '../entities/EntityHelpers';
 import { HourlyDataBlock } from '../entities/DataBlock';
 
 export class MetnoFetchForecast extends FetchForecast {
 
     protected innerExecute(params: TimezoneGeoPoint): Promise<FetchForecastResult> {
         return getMetnoData(params)
-            .then(formatData)
+            .then(data => formatData(data))
             .then(data => {
                 if (!data) {
                     debug('MetNoFetcher no data');
                     return { details: null, hourly: null, units: ForecastUnits.SI }
                 }
                 const allHourly = MetnoDataMapper.toHourlyDataBlock(data, params);
-                const details = ForecastHelpers.hoursDataBlock(allHourly.data);
+                const details = EntityHelpers.hoursDataBlock(allHourly.data);
                 const hourly: HourlyDataBlock = {
                     icon: allHourly.icon,
                     data: allHourly.data.slice(0, 24),
@@ -58,7 +58,7 @@ function formatData(data: any): any[] {
             }
             // if (options.hours.indexOf(time.fromDate.getUTCHours()) > -1) {
             item = time.location;
-            item.time = time.fromDate;
+            item.time = Math.trunc(time.fromDate.getTime() / 1000);
             i++;
             if (i < times.length && times[i].location.symbol) {
                 item.symbol = times[i].location.symbol;

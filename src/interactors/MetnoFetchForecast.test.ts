@@ -2,12 +2,12 @@
 import { MetnoFetchForecast } from './MetnoFetchForecast';
 
 import test from 'ava';
-import { ForecastHelpers } from '../entities/ForecastHelpers';
+import { EntityHelpers } from '../entities/EntityHelpers';
 
 const fetcher = new MetnoFetchForecast();
 const point = {
-    latitude: 28.45,
-    longitude: 46.4,
+    latitude: 47.01,
+    longitude: 28.52,
     timezone: 'Europe/Chisinau',
 };
 
