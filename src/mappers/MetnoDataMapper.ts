@@ -38,7 +38,6 @@ export class MetnoDataMapper {
         segment.data = {
             data: list,
             icon: ForecastHelpers.mostPopularIcon(list),
-            period: ForecastTimePeriod.HOURLY,
         };
 
         return segment;
@@ -64,7 +63,7 @@ export class MetnoDataMapper {
         const time = DateTime.fromJSDate(item.time, { zone: params.timezone });
 
         const data: HourlyDataPoint = {
-            cloudCover: item.cloudiness && item.cloudiness.percent / 100,
+            cloudCover: item.cloudiness && (item.cloudiness.percent / 100),
             dewPoint: item.dewpointTemperature && item.dewpointTemperature.value,
             humidity: item.humidity && item.humidity.value / 100,
             icon: MetnoDataMapper.toIcon(item.symbol.number),
@@ -78,6 +77,8 @@ export class MetnoDataMapper {
             windGust: item.windGust && item.windGust.mps,
             windSpeed: item.windSpeed && item.windSpeed.mps,
         };
+
+        console.log('wind speed',item.windSpeed, data.windSpeed)
 
         return data;
     }

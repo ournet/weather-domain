@@ -29,10 +29,17 @@ export interface HourlyDataPoint extends BaseDataPoint {
 
 }
 
+export enum DayPeriodName {
+    Morning = 'm',
+    Afternoon = 'a',
+    Evening = 'e',
+    Night = 'n',
+}
+
 export interface HoursDataPoint extends BaseDataPoint {
     /** 1 - for a hour, 2 - for next two hours, 3 - for next 3 hours, etc. */
-    hours?: number
-
+    // hours?: number
+    // period: DayPeriodName,
     apparentTemperature?: number
     apparentTemperatureHigh?: number
     apparentTemperatureHighTime?: DateTime

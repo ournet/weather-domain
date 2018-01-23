@@ -1,13 +1,13 @@
 import { DataPoint, HourlyDataBlock } from "../entities";
-import { BaseDataBlock, DetailsDataBlock } from "../entities/DataBlock";
+import { BaseDataBlock, HoursDataBlock } from "../entities/DataBlock";
 import { getDataPointIdByProp, DETAILS_DATA_POINT_PROPS, HOURLY_DATA_POINT_PROPS } from "../entities/DataPoint";
 import { ForecastTimePeriod } from "../entities/common";
 import { ForecastIcon } from "../entities/icon";
 
 
 export class DataBlockMinifier {
-    static toDetails(data: string): DetailsDataBlock {
-        const dataBlock = decompressDataBlock<DetailsDataBlock>(data, Object.keys(DETAILS_DATA_POINT_PROPS));
+    static toDetails(data: string): HoursDataBlock {
+        const dataBlock = decompressDataBlock<HoursDataBlock>(data, Object.keys(DETAILS_DATA_POINT_PROPS));
         return dataBlock;
     }
     static toHourly(data: string): HourlyDataBlock {
@@ -18,7 +18,7 @@ export class DataBlockMinifier {
         const dataBlock = compressDataBlock(data, Object.keys(HOURLY_DATA_POINT_PROPS));
         return dataBlock;
     }
-    static fromDetails(data: DetailsDataBlock): string {
+    static fromDetails(data: HoursDataBlock): string {
         const dataBlock = compressDataBlock(data, Object.keys(DETAILS_DATA_POINT_PROPS));
         return dataBlock;
     }
@@ -28,7 +28,6 @@ function decompressDataBlock<T extends BaseDataBlock>(data: string, props: strin
     const compresedObject: { [index: string]: any, period: ForecastTimePeriod, icon: ForecastIcon, data: { [index: string]: any }[] } = JSON.parse(data);
 
     const dataBlock: BaseDataBlock = {
-        period: compresedObject.period,
         icon: compresedObject.icon,
         night: compresedObject.night,
         data: null,
@@ -51,8 +50,7 @@ function decompressDataBlock<T extends BaseDataBlock>(data: string, props: strin
 }
 
 function compressDataBlock(data: BaseDataBlock, props: string[]): string {
-    const obj: { [index: string]: any, period: ForecastTimePeriod, icon: ForecastIcon, data: { [index: string]: any }[] } = {
-        period: data.period,
+    const obj: { [index: string]: any, icon: ForecastIcon, data: { [index: string]: any }[] } = {
         icon: data.icon,
         data: []
     };
