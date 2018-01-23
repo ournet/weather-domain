@@ -5,3 +5,4 @@ export { ForecastIcon } from './icon';
 export { ForecastTimePeriod, ForecastUnits, GeoPoint, TimezoneGeoPoint } from './common';
 export { DailySegment, DetailsSegment, HourlySegment, ForecastReport } from './Report';
 export { ForecastHelpers } from './ForecastHelpers';
+export { ReportData } from './ReportData';

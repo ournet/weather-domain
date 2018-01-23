@@ -13,3 +13,10 @@ Live on:
 - [Ournet.hu](http://idojaras.ournet.hu)
 - [Moti2.al](http://moti2.al)
 - [Hava.one](http://hava.one)
+
+## API
+
+This module is the `Domain` layer of a Clean Arhitecture.
+
+Data module/layer must implement interfaces `DetailsReportRepository` and `HourlyReportRepository`
+or base interface `ReportRepository`.

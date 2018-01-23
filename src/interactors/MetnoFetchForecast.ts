@@ -4,11 +4,12 @@ var xml2js = require('xml2js');
 
 import fetch from 'node-fetch';
 
-import { FetchForecast } from './FetchForecast';
+import { FetchForecast, FetchForecastResult } from './FetchForecast';
 import { HourlySegment, DetailsSegment, TimezoneGeoPoint } from '../entities';
-import { GeoPoint } from '../entities/common';
+import { GeoPoint, ForecastUnits } from '../entities/common';
 import { MetnoDataMapper } from '../mappers/MetnoDataMapper';
 import { ForecastHelpers } from '../entities/ForecastHelpers';
+import { HourlyDataBlock } from '../entities/DataBlock';
 
 export class MetnoFetchForecast extends FetchForecast {
 
@@ -18,29 +19,18 @@ export class MetnoFetchForecast extends FetchForecast {
             .then(data => {
                 if (!data) {
                     debug('MetNoFetcher no data');
-                    return { details: null, hourly: null }
+                    return { details: null, hourly: null, units: ForecastUnits.SI }
                 }
-                const allHourly = MetnoDataMapper.toHourlySegment(data, params);
-                const details = MetnoDataMapper.toDetailsFromHourlySegment(allHourly);
-                const hourly: HourlySegment = {
-                    latitude: allHourly.latitude,
-                    longitude: allHourly.longitude,
-                    timezone: allHourly.timezone,
-                    units: allHourly.units,
-                    data: allHourly.data,
+                const allHourly = MetnoDataMapper.toHourlyDataBlock(data, params);
+                const details = ForecastHelpers.hoursDataBlock(allHourly.data);
+                const hourly: HourlyDataBlock = {
+                    icon: allHourly.icon,
+                    data: allHourly.data.slice(0, 24),
                 };
 
-                hourly.data.data = hourly.data.data.slice(0, 24);
-                hourly.data.icon = ForecastHelpers.mostPopularIcon(hourly.data.data);
-
-                return { details, hourly };
+                return { details, hourly, units: ForecastUnits.SI };
             });
     }
-}
-
-export interface FetchForecastResult {
-    hourly: HourlySegment
-    details: DetailsSegment
 }
 
 function formatData(data: any): any[] {
@@ -97,7 +87,7 @@ function formatTimeItem(item: any) {
     for (var prop in item) {
         if (prop !== 'time' && item[prop]) {
             delete item[prop].id;
-            
+
             for (var p in item[prop]) {
                 if (~['percent', 'value', 'mps', 'number', 'beaufort', 'deg'].indexOf(p)) {
                     item[prop][p] = parseFloat(item[prop][p]);

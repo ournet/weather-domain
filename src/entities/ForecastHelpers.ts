@@ -77,7 +77,7 @@ export class ForecastHelpers {
         return dayDataPoint;
     }
 
-    static detailsDataBlock(data: HourlyDataPoint[]): HoursDataBlock {
+    static hoursDataBlock(data: HourlyDataPoint[]): HoursDataBlock {
         if (!data.length) {
             throw new Error(`'data' must be a not empty array`);
         }
@@ -392,4 +392,8 @@ export class ForecastHelpers {
 
     //     return DayPeriodName.Evening;
     // }
+
+    static isNight(date: Date, sun: { sunrise: Date, sunset: Date }) {
+        return !(date > sun.sunrise && date < sun.sunset);
+    }
 }

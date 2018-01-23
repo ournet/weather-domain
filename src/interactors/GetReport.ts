@@ -62,12 +62,12 @@ export class GetReport extends UseCase<TimezoneGeoPoint, ForecastReport, void>{
                         debug('NO report');
                         return report;
                     }
-                    report.details = newReport.details.data;
-                    report.hourly = newReport.hourly.data;
+                    report.details = newReport.details;
+                    report.hourly = newReport.hourly;
                     report.daily = ForecastHelpers.dailyDataBlock(report.details.data, report);
 
-                    const putDetails = this.detailsRepository.put(ReportDataMapper.fromDetailsSegment(newReport.details));
-                    const putHourly = this.hourlyRepository.put(ReportDataMapper.fromHourlySegment(newReport.hourly));
+                    const putDetails = this.detailsRepository.put(ReportDataMapper.fromDetails(newReport.details, report));
+                    const putHourly = this.hourlyRepository.put(ReportDataMapper.fromHourly(newReport.hourly, report));
 
                     return Promise.all([putDetails, putHourly]).then(() => null);
                 })

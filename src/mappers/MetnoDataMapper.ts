@@ -6,21 +6,14 @@ import { TimezoneGeoPoint, ForecastUnits, ForecastTimePeriod, DateTime } from ".
 import { HourlyDataPoint, HoursDataPoint } from "../entities/DataPoint";
 import { ForecastIcon } from "../entities/icon";
 import { ForecastHelpers } from "../entities/ForecastHelpers";
+import { HourlyDataBlock, HoursDataBlock } from "../entities/DataBlock";
 
 
 export class MetnoDataMapper {
-    static toHourlySegment(input: any[], params: TimezoneGeoPoint, hours?: number): HourlySegment {
+    static toHourlyDataBlock(input: any[], params: TimezoneGeoPoint, hours?: number): HourlyDataBlock {
         if (!input) {
             return null;
         }
-
-        const segment: HourlySegment = {
-            latitude: params.latitude,
-            longitude: params.longitude,
-            timezone: params.timezone,
-            units: ForecastUnits.SI,
-            data: null,
-        };
 
         const list: HourlyDataPoint[] = [];
         let sun: { sunrise: Date, sunset: Date } = null;
@@ -35,34 +28,18 @@ export class MetnoDataMapper {
             list.push(item);
         }
 
-        segment.data = {
+        const dataBlock: HourlyDataBlock = {
             data: list,
             icon: ForecastHelpers.mostPopularIcon(list),
         };
 
-        return segment;
-    }
-
-    static toDetailsFromHourlySegment(hourly: HourlySegment): DetailsSegment {
-        if (!hourly) {
-            return null;
-        }
-
-        const segment: DetailsSegment = {
-            latitude: hourly.latitude,
-            longitude: hourly.longitude,
-            timezone: hourly.timezone,
-            units: ForecastUnits.SI,
-            data: ForecastHelpers.detailsDataBlock(hourly.data.data),
-        };
-
-        return segment;
+        return dataBlock;
     }
 
     static parseHourlyDataPoint(item: any, params: TimezoneGeoPoint, sun: { sunrise: Date, sunset: Date }): HourlyDataPoint {
         const time = DateTime.fromJSDate(item.time, { zone: params.timezone });
 
-        const night = !(item.time > sun.sunrise && item.time < sun.sunset);
+        const night = ForecastHelpers.isNight(item.time, sun);
 
         const data: HoursDataPoint = {
             cloudCover: item.cloudiness && (item.cloudiness.percent / 100),
