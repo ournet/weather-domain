@@ -110,22 +110,22 @@ const BASE_DATA_POINT_PROPS: { [prop: string]: DataPointProperty } = {
     ozone: {
         id: 'OZ',
         type: 'number',
-        min: 0.1,
+        min: 0.01,
     },
     precipAccumulation: {
         id: 'Pa',
         type: 'number',
-        min: 0.1,
+        min: 0.01,
     },
     precipIntensity: {
         id: 'Pi',
         type: 'number',
-        min: 0.1,
+        min: 0.01,
     },
     precipProbability: {
         id: 'Pp',
         type: 'number',
-        min: 0,
+        min: 0.01,
         max: 1,
     },
     precipType: {
@@ -152,12 +152,12 @@ const BASE_DATA_POINT_PROPS: { [prop: string]: DataPointProperty } = {
     uvIndex: {
         id: 'UV',
         type: 'number',
-        min: 0,
+        min: 0.1,
     },
     visibility: {
         id: 'VI',
         type: 'number',
-        min: 0,
+        min: 0.1,
     },
     windBearing: {
         id: 'Wb',
@@ -178,7 +178,7 @@ const BASE_DATA_POINT_PROPS: { [prop: string]: DataPointProperty } = {
 export const HOURLY_DATA_POINT_PROPS: { [prop: string]: DataPointProperty }
     = { ...BASE_DATA_POINT_PROPS };
 
-export const DETAILS_DATA_POINT_PROPS: { [prop: string]: DataPointProperty }
+export const HOURS_DATA_POINT_PROPS: { [prop: string]: DataPointProperty }
     = {
         ...BASE_DATA_POINT_PROPS,
 
@@ -271,10 +271,14 @@ export const DAILY_DATA_POINT_PROPS: { [prop: string]: DataPointProperty }
         }
     };
 
-export function getDataPointIdByProp(prop: string): string {
-    const property = HOURLY_DATA_POINT_PROPS[prop]
-        || HOURLY_DATA_POINT_PROPS[prop]
+export function getDataPointProperty(prop: string): DataPointProperty {
+    return HOURLY_DATA_POINT_PROPS[prop]
+        || HOURS_DATA_POINT_PROPS[prop]
         || DAILY_DATA_POINT_PROPS[prop];
+}
+
+export function getDataPointIdByProp(prop: string): string {
+    const property = getDataPointProperty(prop);
 
     if (!property) {
         throw new Error(`Property '${prop}' doesn't exists!`);
@@ -290,7 +294,7 @@ export function getDataPointPropById(id: string): string {
 const DATA_POINT_IDS: { [id: string]: string } = {}
 
 buildDataPointIds(HOURLY_DATA_POINT_PROPS);
-buildDataPointIds(DETAILS_DATA_POINT_PROPS);
+buildDataPointIds(HOURS_DATA_POINT_PROPS);
 buildDataPointIds(DAILY_DATA_POINT_PROPS);
 
 function buildDataPointIds(source: { [prop: string]: DataPointProperty }) {

@@ -1,5 +1,5 @@
 
-const debug = require('debug')('ournet-weather');
+const debug = require('debug')('weather-domain');
 var xml2js = require('xml2js');
 
 import fetch from 'node-fetch';
@@ -63,6 +63,7 @@ function formatData(data: any): any[] {
         if (!time.location.symbol) {
             time.fromDate = new Date(time.from);
             if (time.fromDate.getTime() > endTime) {
+                debug(`END metno parse report ${item.fromDate}`)
                 break;
             }
             // if (options.hours.indexOf(time.fromDate.getUTCHours()) > -1) {
@@ -72,6 +73,8 @@ function formatData(data: any): any[] {
             if (i < times.length && times[i].location.symbol) {
                 item.symbol = times[i].location.symbol;
                 item.precipitation = times[i].location.precipitation;
+                item.maxTemperature = times[i].location.maxTemperature;
+                item.minTemperature = times[i].location.minTemperature;
             }
             item = formatTimeItem(item);
             result.push(item);
@@ -92,8 +95,9 @@ function formatTimeItem(item: any) {
     // delete item.dewpointTemperature;
 
     for (var prop in item) {
-        if (prop !== 'time') {
+        if (prop !== 'time' && item[prop]) {
             delete item[prop].id;
+            
             for (var p in item[prop]) {
                 if (~['percent', 'value', 'mps', 'number', 'beaufort', 'deg'].indexOf(p)) {
                     item[prop][p] = parseFloat(item[prop][p]);

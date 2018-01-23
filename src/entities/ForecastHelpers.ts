@@ -1,6 +1,6 @@
 
 const debug = require('debug')('weather-data');
-import { PrecipTypeEnum, HoursDataPoint, BaseDataPoint, HourlyDataPoint, DailyDataPoint, DataPoint, DayPeriodName } from './DataPoint';
+import { PrecipTypeEnum, HoursDataPoint, BaseDataPoint, HourlyDataPoint, DailyDataPoint, DataPoint, DayPeriodName, getDataPointProperty } from './DataPoint';
 import { GeoPoint, ForecastTimePeriod, ForecastUnits, DateTime } from './common';
 import { DailyDataBlock, HoursDataBlock } from './DataBlock';
 import { ForecastIcon } from './icon';
@@ -243,8 +243,20 @@ export class ForecastHelpers {
         const data: DataPoint = { ...point };
 
         for (let prop in data) {
-            if (~[null, undefined].indexOf((<any>data)[prop])) {
+            const value = (<any>data)[prop];
+            if (~[null, undefined].indexOf(value)) {
                 delete (<any>data)[prop];
+            } else {
+                const property = getDataPointProperty(prop);
+                if(!property){
+                    debug('no property ', prop);
+                }
+                if (property.min && value < property.min) {
+                    delete (<any>data)[prop];
+                }
+                else if (property.max && value > property.max) {
+                    delete (<any>data)[prop];
+                }
             }
         }
 
@@ -279,7 +291,7 @@ export class ForecastHelpers {
             data.visibility = parseFloat(data.visibility.toFixed(2));
         }
         if (data.windBearing) {
-            data.windBearing = parseFloat(data.windBearing.toFixed(1));
+            data.windBearing = parseFloat(data.windBearing.toFixed(0));
         }
         if (data.windGust) {
             data.windGust = parseFloat(data.windGust.toFixed(1));
@@ -353,7 +365,7 @@ export class ForecastHelpers {
             currentData.push(item);
         });
 
-        debug(`splitByDaySegment currentData ${currentData.map(item => item.time.toString())}`)
+        // debug(`splitByDaySegment currentData ${currentData.map(item => item.time.toString())}`)
 
         if (currentData.length && currentData.length < 7) {
             list.push(currentData);
@@ -362,17 +374,17 @@ export class ForecastHelpers {
         return list;
     }
 
-    static getDayPeriod(time: DateTime): DayPeriodName {
-        if ([22, 23, 0, 1, 2, 3].indexOf(time.hour)) {
-            return DayPeriodName.Night;
-        }
-        if ([4, 5, 6, 7, 8, 9, 10, 11].indexOf(time.hour)) {
-            return DayPeriodName.Morning;
-        }
-        if ([12, 13, 14, 15, 16].indexOf(time.hour)) {
-            return DayPeriodName.Afternoon;
-        }
+    // static getDayPeriod(time: DateTime): DayPeriodName {
+    //     if ([22, 23, 0, 1, 2, 3].indexOf(time.hour)) {
+    //         return DayPeriodName.Night;
+    //     }
+    //     if ([4, 5, 6, 7, 8, 9, 10, 11].indexOf(time.hour)) {
+    //         return DayPeriodName.Morning;
+    //     }
+    //     if ([12, 13, 14, 15, 16].indexOf(time.hour)) {
+    //         return DayPeriodName.Afternoon;
+    //     }
 
-        return DayPeriodName.Evening;
-    }
+    //     return DayPeriodName.Evening;
+    // }
 }

@@ -62,12 +62,14 @@ export class MetnoDataMapper {
     static parseHourlyDataPoint(item: any, params: TimezoneGeoPoint, sun: { sunrise: Date, sunset: Date }): HourlyDataPoint {
         const time = DateTime.fromJSDate(item.time, { zone: params.timezone });
 
-        const data: HourlyDataPoint = {
+        const night = !(item.time > sun.sunrise && item.time < sun.sunset);
+
+        const data: HoursDataPoint = {
             cloudCover: item.cloudiness && (item.cloudiness.percent / 100),
             dewPoint: item.dewpointTemperature && item.dewpointTemperature.value,
-            humidity: item.humidity && item.humidity.value / 100,
+            humidity: item.humidity && (item.humidity.value / 100),
             icon: MetnoDataMapper.toIcon(item.symbol.number),
-            night: item.time > sun.sunset && item.time < sun.sunrise,
+            night: night,
             precipAccumulation: item.precipitation && item.precipitation.value,
             precipType: null,
             pressure: item.pressure && item.pressure.value,
@@ -76,6 +78,8 @@ export class MetnoDataMapper {
             windBearing: item.windDirection && item.windDirection.deg,
             windGust: item.windGust && item.windGust.mps,
             windSpeed: item.windSpeed && item.windSpeed.mps,
+            temperatureHigh: item.maxTemperature && item.maxTemperature.value,
+            temperatureLow: item.minTemperature && item.minTemperature.value,
         };
 
         return data;

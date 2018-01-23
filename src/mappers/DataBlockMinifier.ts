@@ -1,13 +1,13 @@
 import { DataPoint, HourlyDataBlock } from "../entities";
 import { BaseDataBlock, HoursDataBlock } from "../entities/DataBlock";
-import { getDataPointIdByProp, DETAILS_DATA_POINT_PROPS, HOURLY_DATA_POINT_PROPS } from "../entities/DataPoint";
+import { getDataPointIdByProp, HOURS_DATA_POINT_PROPS, HOURLY_DATA_POINT_PROPS } from "../entities/DataPoint";
 import { ForecastTimePeriod } from "../entities/common";
 import { ForecastIcon } from "../entities/icon";
 
 
 export class DataBlockMinifier {
     static toDetails(data: string): HoursDataBlock {
-        const dataBlock = decompressDataBlock<HoursDataBlock>(data, Object.keys(DETAILS_DATA_POINT_PROPS));
+        const dataBlock = decompressDataBlock<HoursDataBlock>(data, Object.keys(HOURS_DATA_POINT_PROPS));
         return dataBlock;
     }
     static toHourly(data: string): HourlyDataBlock {
@@ -19,7 +19,7 @@ export class DataBlockMinifier {
         return dataBlock;
     }
     static fromDetails(data: HoursDataBlock): string {
-        const dataBlock = compressDataBlock(data, Object.keys(DETAILS_DATA_POINT_PROPS));
+        const dataBlock = compressDataBlock(data, Object.keys(HOURS_DATA_POINT_PROPS));
         return dataBlock;
     }
 }
