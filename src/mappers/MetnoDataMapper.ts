@@ -59,7 +59,7 @@ export class MetnoDataMapper {
             temperatureLow: item.minTemperature && item.minTemperature.value,
         };
 
-        return data;
+        return EntityHelpers.normalizeDataPoint(data);
     }
 
     static toIcon(_symbol: number): ForecastIcon {
