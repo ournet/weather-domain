@@ -66,7 +66,9 @@ export class EntityHelpers {
         }
         const dayDataPoint = <DailyDataPoint>EntityHelpers.hoursDataPoint(data);
 
-        const date = new Date(dayDataPoint.time);
+        delete dayDataPoint.night;
+
+        const date = new Date(dayDataPoint.time * 1000);
 
         const sun = EntityHelpers.getSun(date, report);
         const moon = EntityHelpers.getMoon(date);
