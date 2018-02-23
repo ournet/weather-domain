@@ -100,9 +100,10 @@ const BASE_DATA_POINT_PROPS: { [prop: string]: DataPointProperty } = {
     },
     icon: {
         id: 'I',
-        type: 'string',
+        type: 'number',
         required: true,
-        enum: Object.keys(ForecastIcon),
+        min: 1,
+        max: 100,
     },
     night: {
         id: 'nt',
