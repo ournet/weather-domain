@@ -25,6 +25,9 @@ export class DataBlockMinifier {
 }
 
 function decompressDataBlock<T extends BaseDataBlock>(data: string, props: string[]): T {
+    if (!data) {
+        return null
+    }
     const compresedObject: { [index: string]: any, period: ForecastTimePeriod, icon: ForecastIcon, data: { [index: string]: any }[] } = JSON.parse(data);
 
     const dataBlock: BaseDataBlock = {
