@@ -39,14 +39,16 @@ export interface HoursDataPoint extends BaseDataPoint {
     /** 1 - for a hour, 2 - for next two hours, 3 - for next 3 hours, etc. */
     // hours?: number
     // period: DayPeriodName,
-    apparentTemperature?: number
-    apparentTemperatureHigh?: number
-    apparentTemperatureHighTime?: number
-    apparentTemperatureLow?: number
-    apparentTemperatureLowTime?: number
+    
+    // from forecast.io:
+    // apparentTemperature?: number
+    // apparentTemperatureHigh?: number
+    // apparentTemperatureHighTime?: number
+    // apparentTemperatureLow?: number
+    // apparentTemperatureLowTime?: number
 
-    precipIntensityMax?: number
-    precipIntensityMaxTime?: number
+    // precipIntensityMax?: number
+    // precipIntensityMaxTime?: number
 
     temperatureHigh?: number
     temperatureHighTime?: number

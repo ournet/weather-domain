@@ -18,7 +18,7 @@ export class MetnoFetchForecast extends FetchForecast {
             .then(data => formatData(data))
             .then(data => {
                 if (!data) {
-                    debug('MetNoFetcher no data');
+                    debug('MetnoFetcher no data');
                     return { details: null, hourly: null, units: ForecastUnits.SI }
                 }
                 const allHourly = MetnoDataMapper.toHourlyDataBlock(data, params);

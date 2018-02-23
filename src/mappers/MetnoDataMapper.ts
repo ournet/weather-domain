@@ -2,7 +2,7 @@
 // const debug = require('debug')('weather-domain');
 
 import { TimezoneGeoPoint } from "../entities/common";
-import { HourlyDataPoint, HoursDataPoint } from "../entities/DataPoint";
+import { HourlyDataPoint, HoursDataPoint, PrecipTypeEnum } from "../entities/DataPoint";
 import { ForecastIcon } from "../entities/icon";
 import { EntityHelpers } from "../entities/EntityHelpers";
 import { HourlyDataBlock } from "../entities/DataBlock";
@@ -48,7 +48,7 @@ export class MetnoDataMapper {
             icon: MetnoDataMapper.toIcon(item.symbol.number),
             night: night,
             precipAccumulation: item.precipitation && item.precipitation.value,
-            precipType: null,
+            precipType: MetnoDataMapper.precipType(),
             pressure: item.pressure && item.pressure.value,
             temperature: item.temperature && item.temperature.value,
             time: item.time,
@@ -64,5 +64,9 @@ export class MetnoDataMapper {
 
     static toIcon(_symbol: number): ForecastIcon {
         return ForecastIcon.CLEAR;
+    }
+
+    static precipType(): PrecipTypeEnum {
+        return null;
     }
 }
