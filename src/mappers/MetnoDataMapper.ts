@@ -62,8 +62,8 @@ export class MetnoDataMapper {
         return EntityHelpers.normalizeDataPoint(data);
     }
 
-    static toIcon(_symbol: number): ForecastIcon {
-        return ForecastIcon.CLEAR;
+    static toIcon(symbolNumber: number): ForecastIcon {
+        return symbolNumber;
     }
 
     static precipType(): PrecipTypeEnum {

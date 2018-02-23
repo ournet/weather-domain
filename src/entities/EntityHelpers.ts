@@ -268,6 +268,7 @@ export class EntityHelpers {
                 const property = getDataPointProperty(prop);
                 if (!property) {
                     debug('no property ', prop);
+                    continue
                 }
                 if (property.min && value < property.min) {
                     delete (<any>data)[prop];
