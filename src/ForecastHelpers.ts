@@ -2,7 +2,7 @@ import { EntityHelpers } from "./entities/EntityHelpers";
 import { ForecastReportID } from "./entities/Report";
 import { GeoPoint, ForecastIcon, ForecastUnits } from "./entities";
 import { BaseDataPoint } from "./entities/DataPoint";
-
+const MetnoSymbols = require('metno-symbols')
 
 
 
@@ -34,5 +34,9 @@ export class ForecastHelpers {
 
     static isNight(date: Date, geoPoint: GeoPoint) {
         return EntityHelpers.isNight(date.getTime() / 1000, EntityHelpers.getSun(date, geoPoint));
+    }
+
+    static iconName(icon: ForecastIcon, lang?: string): string {
+        return MetnoSymbols.symbolName(icon, lang)
     }
 }

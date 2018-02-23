@@ -38,6 +38,7 @@
   "dependencies": {
     "@ournet/domain": "^0.1.4",
     "luxon": "^0.3.1",
+    "metno-symbols": "^0.1.1",
     "node-fetch": "^1.7.3",
     "suncalc": "^1.8.0",
     "xml2js": "^0.4.19"

@@ -1,6 +1,15 @@
 
 const debug = require('debug')('weather-data');
-import { PrecipTypeEnum, HoursDataPoint, BaseDataPoint, HourlyDataPoint, DailyDataPoint, DataPoint, getDataPointProperty } from './DataPoint';
+import {
+    PrecipTypeEnum,
+    HoursDataPoint,
+    BaseDataPoint,
+    HourlyDataPoint,
+    DailyDataPoint,
+    DataPoint,
+    getDataPointProperty
+} from './DataPoint';
+
 import { GeoPoint, ForecastUnits } from './common';
 import { DailyDataBlock, HoursDataBlock } from './DataBlock';
 import { ForecastIcon } from './icon';
@@ -21,6 +30,7 @@ export class EntityHelpers {
     static hourlyStringReportId(id: ForecastReportID) {
         return EntityHelpers.stringReportId(id, ReportType.Hourly);
     }
+
     static detailsStringReportId(id: ForecastReportID) {
         return EntityHelpers.stringReportId(id, ReportType.Details);
     }
