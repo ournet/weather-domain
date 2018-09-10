@@ -18,5 +18,9 @@ Live on:
 
 This module is the `Domain` layer of a Clean Arhitecture.
 
-Data module/layer must implement interfaces `DetailsReportRepository` and `HourlyReportRepository`
-or base interface `ReportRepository`.
+Data module/layer must implement interfaces `DetailsReportRepository` and
+`HourlyReportRepository` or base interface `ReportRepository`.
+
+## Changelog
+
+- v0.2.0 - September 10, 2018

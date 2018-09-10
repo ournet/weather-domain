@@ -1,5 +1,5 @@
 
-const debug = require('debug')('weather-data');
+const debug = require('debug')('ournet:weather-domain');
 import {
     PrecipTypeEnum,
     HoursDataPoint,
@@ -8,17 +8,17 @@ import {
     DailyDataPoint,
     DataPoint,
     getDataPointProperty
-} from './DataPoint';
+} from './data-point';
 
 import { GeoPoint, ForecastUnits } from './common';
-import { DailyDataBlock, HoursDataBlock } from './DataBlock';
+import { DailyDataBlock, HoursDataBlock } from './data-block';
 import { ForecastIcon } from './icon';
-import { ForecastReportID, BaseForecastReport, ReportType } from './Report';
+import { ForecastReportID, BaseForecastReport, ReportType } from './report';
 import { DateTime } from 'luxon';
 
 const SunCalc = require('suncalc');
 
-export class EntityHelpers {
+export class ReportHelper {
 
     static normalizeReportId(id: ForecastReportID): ForecastReportID {
         return {
@@ -28,11 +28,11 @@ export class EntityHelpers {
     }
 
     static hourlyStringReportId(id: ForecastReportID) {
-        return EntityHelpers.stringReportId(id, ReportType.Hourly);
+        return ReportHelper.stringReportId(id, ReportType.Hourly);
     }
 
     static detailsStringReportId(id: ForecastReportID) {
-        return EntityHelpers.stringReportId(id, ReportType.Details);
+        return ReportHelper.stringReportId(id, ReportType.Details);
     }
 
     static stringReportId(id: ForecastReportID, type: ReportType): string {
@@ -49,7 +49,7 @@ export class EntityHelpers {
             //     break;
             default: throw new Error(`Invalid report type ${type}`);
         }
-        id = EntityHelpers.normalizeReportId(id);
+        id = ReportHelper.normalizeReportId(id);
         return `${prefix}_${id.latitude.toFixed(1)}_${id.longitude.toFixed(1)}`;
     }
 
@@ -59,13 +59,9 @@ export class EntityHelpers {
         }
 
         const dailyDataBlock: DailyDataBlock = {
-            icon: EntityHelpers.mostPopularIcon(data),
-            data: null
+            icon: ReportHelper.mostPopularIcon(data),
+            data: ReportHelper.splitByDay(data, report.timezone).map(item => ReportHelper.dailyDataPoint(item, report)),
         };
-
-        const dataByDays = EntityHelpers.splitByDay(data, report.timezone).map(item => EntityHelpers.dailyDataPoint(item, report));
-
-        dailyDataBlock.data = dataByDays;
 
         return dailyDataBlock;
     }
@@ -74,14 +70,14 @@ export class EntityHelpers {
         if (!data.length) {
             throw new Error(`'data' must be a not empty array`);
         }
-        const dayDataPoint = <DailyDataPoint>EntityHelpers.hoursDataPoint(data);
+        const dayDataPoint = <DailyDataPoint>ReportHelper.hoursDataPoint(data);
 
         delete dayDataPoint.night;
 
         const date = new Date(dayDataPoint.time * 1000);
 
-        const sun = EntityHelpers.getSun(date, report);
-        const moon = EntityHelpers.getMoon(date);
+        const sun = ReportHelper.getSun(date, report);
+        const moon = ReportHelper.getMoon(date);
 
         dayDataPoint.sunriseTime = sun.sunrise;
         dayDataPoint.sunsetTime = sun.sunset;
@@ -96,11 +92,9 @@ export class EntityHelpers {
         }
 
         const dataBlock: HoursDataBlock = {
-            icon: EntityHelpers.mostPopularIcon(data),
-            data: null
+            icon: ReportHelper.mostPopularIcon(data),
+            data: ReportHelper.splitByDayPeriod(data).map(item => ReportHelper.hoursDataPoint(item)),
         };
-
-        dataBlock.data = EntityHelpers.splitByDayPeriod(data).map(item => EntityHelpers.hoursDataPoint(item));
 
         return dataBlock;
     }
@@ -145,28 +139,30 @@ export class EntityHelpers {
         let ozone = 0;
         let precipAccumulation = 0;
         let precipProbability = 0;
-        let precipType: PrecipTypeEnum;
+        let precipType: PrecipTypeEnum | undefined;
         let pressure = 0;
         let uvIndex = 0;
         let uvIndexMax = 0;
-        let uvIndexTime: number;
+        let uvIndexTime: number | undefined;
         let visibility = 0;
         let windGust = 0;
         let windSpeed = 0;
         let dewPoint = 0;
         let temperature = 0;
 
-        const tempData: { high: number, highTime: number, low: number, lowTime: number }
+        const tempData
             = data.reduce((prev, current) => {
                 const high = (<HoursDataPoint>current).temperatureHigh;
                 // has interval high
                 if (high) {
-                    if (prev.high === null || high > prev.high) {
+                    if (prev.high === undefined || high > prev.high) {
                         prev.high = high;
-                        prev.highTime = (<HoursDataPoint>current).temperatureHighTime;
+                        if ((<HoursDataPoint>current).temperatureHighTime) {
+                            prev.highTime = (<HoursDataPoint>current).temperatureHighTime as number;
+                        }
                     }
                 } else {
-                    if (prev.high === null || current.temperature > prev.high) {
+                    if (prev.high === undefined || current.temperature > prev.high) {
                         prev.high = current.temperature;
                         prev.highTime = current.time;
                     }
@@ -174,18 +170,20 @@ export class EntityHelpers {
                 const low = (<HoursDataPoint>current).temperatureLow;
                 // has interval low
                 if (low) {
-                    if (prev.low === null || low < prev.low) {
+                    if (prev.low === undefined || low < prev.low) {
                         prev.low = low;
-                        prev.lowTime = (<HoursDataPoint>current).temperatureLowTime;
+                        if ((<HoursDataPoint>current).temperatureLowTime) {
+                            prev.lowTime = (<HoursDataPoint>current).temperatureLowTime as number;
+                        }
                     }
                 } else {
-                    if (prev.low === null || current.temperature < prev.low) {
+                    if (prev.low === undefined || current.temperature < prev.low) {
                         prev.low = current.temperature;
                         prev.lowTime = current.time;
                     }
                 }
                 return prev;
-            }, { high: null, highTime: null, low: null, lowTime: null });
+            }, {} as { high: number | undefined, highTime: number | undefined, low: number | undefined, lowTime: number | undefined });
 
         data.forEach(item => {
             cloudCover += (item.cloudCover || 0);
@@ -193,8 +191,10 @@ export class EntityHelpers {
             humidity += (item.humidity || 0);
             ozone += (item.ozone || 0);
             precipAccumulation += (item.precipAccumulation || 0);
-            precipProbability = precipProbability > item.precipProbability ?
-                precipProbability : item.precipProbability;
+            if (item.precipProbability !== undefined) {
+                precipProbability = precipProbability > item.precipProbability ?
+                    precipProbability : item.precipProbability;
+            }
             if (item.precipType) {
                 // already set:
                 if (precipType) {
@@ -208,9 +208,11 @@ export class EntityHelpers {
             pressure += (item.pressure || 0);
             temperature += item.temperature;
             uvIndex += (item.uvIndex || 0);
-            if (uvIndexMax < item.uvIndex) {
-                uvIndexMax = item.uvIndex;
-                uvIndexTime = item.time;
+            if (item.uvIndex !== undefined) {
+                if (uvIndexMax < item.uvIndex) {
+                    uvIndexMax = item.uvIndex;
+                    uvIndexTime = item.time;
+                }
             }
             visibility += (item.visibility || 0);
             windGust += (item.windGust || 0);
@@ -235,7 +237,7 @@ export class EntityHelpers {
         const dataPoint: HoursDataPoint = {
             // period: ForecastHelpers.getDayPeriod(firstData.time),
             time: firstData.time,
-            icon: EntityHelpers.mostPopularIcon(data),
+            icon: ReportHelper.mostPopularIcon(data),
             temperature: temperature,
             temperatureHigh: tempData.high, // highTempData.temperature,
             temperatureHighTime: tempData.highTime, // highTempData.time,
@@ -264,7 +266,7 @@ export class EntityHelpers {
 
         };
 
-        return EntityHelpers.normalizeDataPoint(dataPoint) as HoursDataPoint;
+        return ReportHelper.normalizeDataPoint(dataPoint) as HoursDataPoint;
     }
 
     static normalizeDataPoint(point: DataPoint): DataPoint {
@@ -329,8 +331,10 @@ export class EntityHelpers {
             data.windSpeed = parseFloat(data.windSpeed.toFixed(1));
         }
 
-        if ((<DailyDataPoint>data).moonPhase) {
-            (<DailyDataPoint>data).moonPhase = parseFloat((<DailyDataPoint>data).moonPhase.toFixed(2));
+        const moonPhase = (<DailyDataPoint>data).moonPhase;
+
+        if (moonPhase !== undefined) {
+            (<DailyDataPoint>data).moonPhase = parseFloat(moonPhase.toFixed(2));
         }
 
 
@@ -370,8 +374,8 @@ export class EntityHelpers {
 
         data.forEach(item => {
             if (currentData.length &&
-                EntityHelpers.unixTimeToZoneDate(currentData[currentData.length - 1].time, timezone).getDate()
-                !== EntityHelpers.unixTimeToZoneDate(item.time, timezone).getDate()) {
+                ReportHelper.unixTimeToZoneDate(currentData[currentData.length - 1].time, timezone).getDate()
+                !== ReportHelper.unixTimeToZoneDate(item.time, timezone).getDate()) {
                 list.push(currentData);
                 currentData = [];
             }

@@ -4,25 +4,25 @@ var xml2js = require('xml2js');
 
 import fetch from 'node-fetch';
 
-import { FetchForecast, FetchForecastResult } from './FetchForecast';
+import { FetchForecast, FetchForecastResult } from './fetch-forecast';
 import { TimezoneGeoPoint } from '../entities';
 import { GeoPoint, ForecastUnits } from '../entities/common';
-import { MetnoDataMapper } from '../mappers/MetnoDataMapper';
-import { EntityHelpers } from '../entities/EntityHelpers';
-import { HourlyDataBlock } from '../entities/DataBlock';
+import { MetnoDataMapper } from '../mappers/metno-data-mapper';
+import { ReportHelper } from '../entities/report-helper';
+import { HourlyDataBlock } from '../entities/data-block';
 
 export class MetnoFetchForecast extends FetchForecast {
 
-    protected innerExecute(params: TimezoneGeoPoint): Promise<FetchForecastResult> {
+    protected innerExecute(params: TimezoneGeoPoint): Promise<FetchForecastResult | null> {
         return getMetnoData(params)
             .then(data => formatData(data))
             .then(data => {
                 if (!data) {
                     debug('MetnoFetcher no data');
-                    return { details: null, hourly: null, units: ForecastUnits.SI }
+                    return null;
                 }
                 const allHourly = MetnoDataMapper.toHourlyDataBlock(data, params);
-                const details = EntityHelpers.hoursDataBlock(allHourly.data);
+                const details = ReportHelper.hoursDataBlock(allHourly.data);
                 const hourly: HourlyDataBlock = {
                     icon: allHourly.icon,
                     data: allHourly.data.slice(0, 24),
@@ -33,7 +33,7 @@ export class MetnoFetchForecast extends FetchForecast {
     }
 }
 
-function formatData(data: any): any[] {
+function formatData(data: any): any[] | null {
     if (!data || !data.weatherdata) {
         return null;
     }

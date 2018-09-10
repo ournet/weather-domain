@@ -1,6 +1,6 @@
 import { DataPoint, HourlyDataBlock } from "../entities";
-import { BaseDataBlock, HoursDataBlock } from "../entities/DataBlock";
-import { getDataPointIdByProp, HOURS_DATA_POINT_PROPS, HOURLY_DATA_POINT_PROPS } from "../entities/DataPoint";
+import { BaseDataBlock, HoursDataBlock } from "../entities/data-block";
+import { getDataPointIdByProp, HOURS_DATA_POINT_PROPS, HOURLY_DATA_POINT_PROPS } from "../entities/data-point";
 import { ForecastTimePeriod } from "../entities/common";
 import { ForecastIcon } from "../entities/icon";
 
@@ -25,15 +25,12 @@ export class DataBlockMinifier {
 }
 
 function decompressDataBlock<T extends BaseDataBlock>(data: string, props: string[]): T {
-    if (!data) {
-        return null
-    }
     const compresedObject: { [index: string]: any, period: ForecastTimePeriod, icon: ForecastIcon, data: { [index: string]: any }[] } = JSON.parse(data);
 
     const dataBlock: BaseDataBlock = {
         icon: compresedObject.icon,
         night: compresedObject.night,
-        data: null,
+        data: [],
     };
 
     dataBlock.data = <DataPoint[]>compresedObject.data.map(dataPoint => {

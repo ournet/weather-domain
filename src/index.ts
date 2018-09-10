@@ -1,4 +1,4 @@
 
 export * from './entities';
 export * from './interactors';
-export { ForecastHelpers } from './ForecastHelpers';
+export { ForecastHelper } from './forecast-helper';

@@ -16,3 +16,12 @@ export function promiseProps(props: { [prop: string]: Promise<any> }): Promise<{
 export function getRandomInt(min: number, max: number): number {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+
+export function hasValue(value: any) {
+    return ![null, undefined].includes(value);
+}
+
+export function unixTime(date?: Date) {
+    date = date || new Date();
+    return Math.floor(date.getTime() / 1000);
+}

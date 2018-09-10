@@ -1,5 +1,5 @@
 
-import { MetnoFetchForecast } from './MetnoFetchForecast';
+import { MetnoFetchForecast } from './metno-fetch-forecast';
 
 import test from 'ava';
 
@@ -14,5 +14,5 @@ test('valid Report', async t => {
     const result = await fetcher.execute(point);
     // console.log(result.details.data);
     t.is(!!result, true, 'result exists');
-    t.is(result.hourly.data.length, 24, '24 hourly');
+    result && t.is(result.hourly.data.length, 24, '24 hourly');
 });

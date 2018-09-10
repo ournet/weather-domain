@@ -3,29 +3,29 @@ const debug = require('debug')('weather-domain');
 
 import { UseCase } from '@ournet/domain';
 import { TimezoneGeoPoint, ForecastReport } from '../entities';
-import { FetchForecast } from './FetchForecast';
-import { IReportRepository } from './ReportRepository';
+import { FetchForecast } from './fetch-forecast';
+import { ReportRepository } from './report-repository';
 import { ForecastUnits } from '../entities/common';
-import { promiseProps, getRandomInt } from '../utils';
-import { ReportData } from '../entities/ReportData';
-import { DataBlockMinifier } from '../mappers/DataBlockMinifier';
-import { ReportDataMapper } from '../mappers/ReportDataMapper';
-import { EntityHelpers } from '../entities/EntityHelpers';
+import { promiseProps, getRandomInt, unixTime } from '../utils';
+import { ReportData } from '../entities/report-data';
+import { DataBlockMinifier } from '../mappers/data-block-minifier';
+import { ReportDataMapper } from '../mappers/report-data-mapper';
+import { ReportHelper } from '../entities/report-helper';
 
 let REPORT_BUFFER_CACHE: { [key: string]: Promise<ForecastReport> } = {}
 
 export class GetReport extends UseCase<TimezoneGeoPoint, ForecastReport, void>{
-    constructor(protected detailsRepository: IReportRepository,
-        protected hourlyRepository: IReportRepository,
+    constructor(protected detailsRepository: ReportRepository,
+        protected hourlyRepository: ReportRepository,
         protected fetcher: FetchForecast) {
         super();
     }
 
     protected innerExecute(params: TimezoneGeoPoint): Promise<ForecastReport> {
 
-        const normalId = EntityHelpers.normalizeReportId(params);
-        const hourlyId = EntityHelpers.hourlyStringReportId(normalId);
-        const detailsId = EntityHelpers.detailsStringReportId(normalId);
+        const normalId = ReportHelper.normalizeReportId(params);
+        const hourlyId = ReportHelper.hourlyStringReportId(normalId);
+        const detailsId = ReportHelper.detailsStringReportId(normalId);
 
         const bufferKey = hourlyId;
 
@@ -42,7 +42,7 @@ export class GetReport extends UseCase<TimezoneGeoPoint, ForecastReport, void>{
             }
         }
 
-        const props: { [prop: string]: Promise<ReportData> } = {
+        const props: { [prop: string]: Promise<ReportData | null> } = {
             details: this.detailsRepository.getById(detailsId),
             hourly: this.hourlyRepository.getById(hourlyId),
         }
@@ -59,11 +59,11 @@ export class GetReport extends UseCase<TimezoneGeoPoint, ForecastReport, void>{
                 const details: ReportData = results.details;
                 const hourly: ReportData = results.hourly;
 
-                if (hourly && details && details.expiresAt.getTime() > Date.now()) {
+                if (hourly && details && details.expiresAt > unixTime()) {
                     report.details = DataBlockMinifier.toDetails(details.data);
                     report.hourly = DataBlockMinifier.toHourly(hourly.data);
                     if (report.details) {
-                        report.daily = EntityHelpers.dailyDataBlock(report.details.data, report);
+                        report.daily = ReportHelper.dailyDataBlock(report.details.data, report);
                     }
 
                     return report;
@@ -79,14 +79,13 @@ export class GetReport extends UseCase<TimezoneGeoPoint, ForecastReport, void>{
                         }
                         report.details = newReport.details;
                         report.hourly = newReport.hourly;
-                        report.daily = EntityHelpers.dailyDataBlock(report.details.data, report);
+                        report.daily = ReportHelper.dailyDataBlock(report.details.data, report);
 
                         const putDetails = this.detailsRepository.put(ReportDataMapper.fromDetails(newReport.details, report));
                         const putHourly = this.hourlyRepository.put(ReportDataMapper.fromHourly(newReport.hourly, report));
 
-                        return Promise.all([putDetails, putHourly]).then(() => null);
-                    })
-                    .then<ForecastReport>(() => report);
+                        return Promise.all([putDetails, putHourly]).then(() => report);
+                    });
             })
             .then(report => {
                 clearBufferCache(bufferKey)

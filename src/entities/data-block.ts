@@ -1,5 +1,5 @@
 
-import { DataPoint, DailyDataPoint, HourlyDataPoint, HoursDataPoint } from './DataPoint';
+import { DataPoint, DailyDataPoint, HourlyDataPoint, HoursDataPoint } from './data-point';
 import { ForecastIcon } from './icon';
 
 export type DataBlock = DailyDataBlock | HourlyDataBlock | HoursDataBlock;

@@ -1,7 +1,5 @@
 
-export * from './DetailsReportRepository';
-export * from './HourlyReportRepository';
-export * from './ReportRepository';
-export * from './GetReport';
-export * from './FetchForecast';
-export * from './MetnoFetchForecast';
+export * from './report-repository';
+export * from './get-report';
+export * from './fetch-forecast';
+export * from './metno-fetch-forecast';

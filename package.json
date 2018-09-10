@@ -1,9 +1,9 @@
 {
   "name": "@ournet/weather-domain",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "description": "Ournet weather domain",
   "main": "./lib/index.js",
-  "types": "./types/index.d.ts",
+  "types": "./lib/index.d.ts",
   "scripts": {
     "pretest": "npm run clean && npm run tsc",
     "test": "ava --no-cache --verbose lib/**/*.test.js",
@@ -13,11 +13,11 @@
     "preversion": "npm run tsc",
     "postversion": "git push --follow-tags",
     "prepublishOnly": "npm run tsc && npm run clean-test-code",
-    "clean": "rm -fr ./lib && rm -fr ./types",
-    "clean-test-code": "rm -fr ./lib/**/*.test.js && rm -fr ./types/**/*.test.d.ts"
+    "clean": "rimraf ./lib",
+    "clean-test-code": "rimraf ./lib/**/*.test.js && rimraf ./lib/**/*.test.d.ts"
   },
   "engines": {
-    "node": ">=6.0.0"
+    "node": ">=8.0.0"
   },
   "repository": {
     "type": "git",
@@ -36,7 +36,8 @@
   },
   "homepage": "https://github.com/Ournet/weather-domain",
   "dependencies": {
-    "@ournet/domain": "^0.1.4",
+    "@ournet/domain": "^0.3.1",
+    "joi": "^13.6.0",
     "luxon": "^0.3.1",
     "metno-symbols": "^0.1.1",
     "node-fetch": "^1.7.3",
@@ -44,11 +45,13 @@
     "xml2js": "^0.4.19"
   },
   "devDependencies": {
+    "@types/joi": "^13.4.4",
     "@types/luxon": "^0.2.3",
     "@types/node": "^8.x.x",
     "@types/node-fetch": "^1.6.7",
     "ava": "^0.23.0",
     "debug": "^3.1.0",
+    "rimraf": "^2.6.2",
     "typescript": "latest"
   }
 }

@@ -8,7 +8,7 @@ import { ForecastUnits } from '../entities/common';
 /**
  * Fetch forecast reports
  */
-export abstract class FetchForecast extends UseCase<TimezoneGeoPoint, FetchForecastResult, void> {
+export abstract class FetchForecast extends UseCase<TimezoneGeoPoint, FetchForecastResult | null, void> {
     constructor() {
         super();
     }
