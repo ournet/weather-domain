@@ -44,14 +44,6 @@
   dependencies:
     arrify "^1.0.1"
 
-"@ournet/domain@^0.3.1":
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/@ournet/domain/-/domain-0.3.1.tgz#d039def4ca295e367dbf7ce816de9d929095f52f"
-  dependencies:
-    atonic "^1.0.4"
-    joi "^13.6.0"
-    normalize-url "^3.2.0"
-
 "@types/joi@^13.4.4":
   version "13.4.4"
   resolved "https://registry.yarnpkg.com/@types/joi/-/joi-13.4.4.tgz#258bda71b30b6f3f9a11eea3e122fccdab8df053"
@@ -177,10 +169,6 @@ arrify@^1.0.0, arrify@^1.0.1:
 async-each@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/async-each/-/async-each-1.0.1.tgz#19d386a1d9edc6e7c1c85d388aedbcc56d33602d"
-
-atonic@^1.0.4:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/atonic/-/atonic-1.0.4.tgz#7db3f216070abb68660f18122a380903e09d27c7"
 
 auto-bind@^1.1.0:
   version "1.2.1"
@@ -1812,10 +1800,6 @@ normalize-path@^2.0.0, normalize-path@^2.0.1:
   resolved "https://registry.yarnpkg.com/normalize-path/-/normalize-path-2.1.1.tgz#1ab28b556e198363a8c1a6f7e6fa20137fe6aed9"
   dependencies:
     remove-trailing-separator "^1.0.1"
-
-normalize-url@^3.2.0:
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/normalize-url/-/normalize-url-3.3.0.tgz#b2e1c4dc4f7c6d57743df733a4f5978d18650559"
 
 npm-bundled@^1.0.1:
   version "1.0.5"
