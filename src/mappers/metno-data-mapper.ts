@@ -49,7 +49,7 @@ export class MetnoDataMapper {
             pressure: item.pressure && item.pressure.value,
             temperature: item.temperature && item.temperature.value,
             time: item.time,
-            windBearing: item.windDirection && item.windDirection.deg,
+            windDir: item.windDirection && item.windDirection.name,
             windGust: item.windGust && item.windGust.mps,
             windSpeed: item.windSpeed && item.windSpeed.mps,
             temperatureHigh: item.maxTemperature && item.maxTemperature.value,

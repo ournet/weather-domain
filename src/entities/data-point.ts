@@ -1,6 +1,7 @@
 import { ForecastIcon } from './icon';
 
 export type DataPoint = DailyDataPoint | HourlyDataPoint | HoursDataPoint;
+export type WindDirection = 'N' | 'NNE' | 'NE' | 'ENE' | 'E' | 'ESE' | 'SE' | 'SSE' | 'S' | 'SSW' | 'SW' | 'WSW' | 'W' | 'WNW' | 'NW' | 'NNW';
 
 export interface BaseDataPoint {
     cloudCover?: number
@@ -19,7 +20,7 @@ export interface BaseDataPoint {
     time: number
     uvIndex?: number
     visibility?: number
-    windBearing?: number
+    windDir?: WindDirection
     windGust?: number
     windSpeed?: number
 }
@@ -39,7 +40,7 @@ export interface HoursDataPoint extends BaseDataPoint {
     /** 1 - for a hour, 2 - for next two hours, 3 - for next 3 hours, etc. */
     // hours?: number
     // period: DayPeriodName,
-    
+
     // from forecast.io:
     // apparentTemperature?: number
     // apparentTemperatureHigh?: number
@@ -160,10 +161,9 @@ const BASE_DATA_POINT_PROPS: { [prop: string]: DataPointProperty } = {
         type: 'number',
         min: 0.1,
     },
-    windBearing: {
-        id: 'Wb',
-        type: 'number',
-        min: 0,
+    windDirection: {
+        id: 'Wd',
+        type: 'string',
     },
     windGust: {
         id: 'Wg',
@@ -182,91 +182,91 @@ export const HOURLY_DATA_POINT_PROPS: { [prop: string]: DataPointProperty }
 
 export const HOURS_DATA_POINT_PROPS: { [prop: string]: DataPointProperty }
     = {
-        ...BASE_DATA_POINT_PROPS,
+    ...BASE_DATA_POINT_PROPS,
 
-        hours: {
-            id: 'hs',
-            type: 'number',
-            min: 1,
-            max: 24,
-        },
+    hours: {
+        id: 'hs',
+        type: 'number',
+        min: 1,
+        max: 24,
+    },
 
-        apparentTemperature: {
-            id: 'aT',
-            type: 'number',
-        },
-        apparentTemperatureHigh: {
-            id: 'aTh',
-            type: 'number',
-        },
-        apparentTemperatureHighTime: {
-            id: 'aTht',
-            type: 'date',
-        },
-        apparentTemperatureLow: {
-            id: 'aTl',
-            type: 'number',
-        },
-        apparentTemperatureLowTime: {
-            id: 'aTlt',
-            type: 'date',
-        },
+    apparentTemperature: {
+        id: 'aT',
+        type: 'number',
+    },
+    apparentTemperatureHigh: {
+        id: 'aTh',
+        type: 'number',
+    },
+    apparentTemperatureHighTime: {
+        id: 'aTht',
+        type: 'date',
+    },
+    apparentTemperatureLow: {
+        id: 'aTl',
+        type: 'number',
+    },
+    apparentTemperatureLowTime: {
+        id: 'aTlt',
+        type: 'date',
+    },
 
-        precipIntensityMax: {
-            id: 'Pim',
-            type: 'number',
-            min: 1,
-        },
-        precipIntensityMaxTime: {
-            id: 'Pimt',
-            type: 'date',
-        },
+    precipIntensityMax: {
+        id: 'Pim',
+        type: 'number',
+        min: 1,
+    },
+    precipIntensityMaxTime: {
+        id: 'Pimt',
+        type: 'date',
+    },
 
-        temperatureHigh: {
-            id: 'Th',
-            type: 'number',
-        },
-        temperatureHighTime: {
-            id: 'Tht',
-            type: 'date',
-        },
-        temperatureLow: {
-            id: 'Tl',
-            type: 'number',
-        },
-        temperatureLowTime: {
-            id: 'Tlt',
-            type: 'date',
-        },
+    temperatureHigh: {
+        id: 'Th',
+        type: 'number',
+    },
+    temperatureHighTime: {
+        id: 'Tht',
+        type: 'date',
+    },
+    temperatureLow: {
+        id: 'Tl',
+        type: 'number',
+    },
+    temperatureLowTime: {
+        id: 'Tlt',
+        type: 'date',
+    },
 
-        uvIndexTime: {
-            id: 'UVt',
-            type: 'date',
-        },
-    };
+    uvIndexTime: {
+        id: 'UVt',
+        type: 'date',
+    },
+};
 
 export const DAILY_DATA_POINT_PROPS: { [prop: string]: DataPointProperty }
     = {
-        ...BASE_DATA_POINT_PROPS,
+    ...BASE_DATA_POINT_PROPS,
 
-        moonPhase: {
-            id: 'MNp',
-            type: 'number',
-            min: 0,
-            max: 1,
-        },
+    moonPhase: {
+        id: 'MNp',
+        type: 'number',
+        min: 0,
+        max: 1,
+    },
 
-        sunriseTime: {
-            id: 'SRt',
-            type: 'date',
-            required: true,
-        },
-        sunsetTime: {
-            id: 'SSt',
-            type: 'date',
-            required: true,
-        }
-    };
+    sunriseTime: {
+        id: 'SRt',
+        type: 'date',
+        required: true,
+    },
+    sunsetTime: {
+        id: 'SSt',
+        type: 'date',
+        required: true,
+    }
+};
 
 export function getDataPointProperty(prop: string): DataPointProperty {
     return HOURLY_DATA_POINT_PROPS[prop]

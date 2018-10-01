@@ -260,7 +260,7 @@ export class ReportHelper {
             uvIndex: uvIndex,
             uvIndexTime: uvIndexTime,
             visibility: visibility,
-            windBearing: middleData.windBearing,
+            windDir: middleData.windDir,
             windGust: windGust,
             windSpeed: windSpeed,
 
@@ -321,8 +321,8 @@ export class ReportHelper {
         if (data.visibility) {
             data.visibility = parseFloat(data.visibility.toFixed(2));
         }
-        if (data.windBearing) {
-            data.windBearing = parseFloat(data.windBearing.toFixed(0));
+        if (data.windDir) {
+            data.windDir = data.windDir;
         }
         if (data.windGust) {
             data.windGust = parseFloat(data.windGust.toFixed(1));
