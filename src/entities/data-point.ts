@@ -161,7 +161,7 @@ const BASE_DATA_POINT_PROPS: { [prop: string]: DataPointProperty } = {
         type: 'number',
         min: 0.1,
     },
-    windDirection: {
+    windDir: {
         id: 'Wd',
         type: 'string',
     },

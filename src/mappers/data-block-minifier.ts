@@ -25,15 +25,18 @@ export class DataBlockMinifier {
 }
 
 function decompressDataBlock<T extends BaseDataBlock>(data: string, props: string[]): T {
-    const compresedObject: { [index: string]: any, period: ForecastTimePeriod, icon: ForecastIcon, data: { [index: string]: any }[] } = JSON.parse(data);
+    const compressedObject: { [index: string]: any, period: ForecastTimePeriod, icon: ForecastIcon, data: { [index: string]: any }[] } = JSON.parse(data);
 
     const dataBlock: BaseDataBlock = {
-        icon: compresedObject.icon,
-        night: compresedObject.night,
+        icon: compressedObject.icon,
         data: [],
     };
 
-    dataBlock.data = <DataPoint[]>compresedObject.data.map(dataPoint => {
+    if (typeof compressedObject.night === 'boolean') {
+        dataBlock.night = compressedObject.night;
+    }
+
+    dataBlock.data = <DataPoint[]>compressedObject.data.map(dataPoint => {
         const result: { [index: string]: any } = {};
         props.forEach(prop => {
             const id = getDataPointIdByProp(prop);
