@@ -17,6 +17,9 @@ export class MetnoDataMapper {
         hours = hours || 300;
 
         for (let i = 0; i < hours && i < input.length; i++) {
+            if (!input[i].symbol) {
+                continue;
+            }
             if (i === 0 ||
                 ReportHelper.unixTimeToZoneDate(list[list.length - 1].time, params.timezone).getDate()
                 !== ReportHelper.unixTimeToZoneDate(input[i].time, params.timezone).getDate()) {
