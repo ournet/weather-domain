@@ -10,7 +10,7 @@ export class ReportDataValidator extends JoiEntityValidator<ReportData> {
 }
 
 const schema = {
-    id: Joi.string().regex(/^(DTL|HLY)_\d+.\d_\d+.\d$/),
+    id: Joi.string().regex(/^(DTL|HLY)_-?\d+.\d_-?\d+.\d$/),
 
     data: Joi.string().min(50).max(8000),
     units: Joi.string().valid('si'),
