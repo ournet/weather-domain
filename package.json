@@ -1,6 +1,6 @@
 {
   "name": "@ournet/weather-domain",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Ournet weather domain",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
@@ -39,7 +39,6 @@
     "@ournet/domain": "^0.3.3",
     "joi": "^14.0.6",
     "luxon": "^1.6.2",
-    "metno-symbols": "^0.1.1",
     "node-fetch": "^2.3.0",
     "suncalc": "^1.8.0",
     "xml2js": "^0.4.19"
