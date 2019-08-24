@@ -100,7 +100,7 @@ function formatTimeItem(item: any) {
 
 function getMetnoData(geoPint: GeoPoint): Promise<any> {
 
-    const url = `http://api.met.no/weatherapi/locationforecast/1.9/?lat=${geoPint.latitude};lon=${geoPint.longitude}`;
+    const url = `https://api.met.no/weatherapi/locationforecast/1.9/?lat=${geoPint.latitude};lon=${geoPint.longitude}`;
     const options = {
         timeout: 5000,
         method: 'GET',
