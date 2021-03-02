@@ -1,27 +1,26 @@
-
-import { HoursDataBlock, HourlyDataBlock, DailyDataBlock } from './data-block';
-import { ForecastUnits } from './common';
+import { HoursDataBlock, HourlyDataBlock, DailyDataBlock } from "./data-block";
+import { ForecastUnits } from "./common";
 
 export type ForecastReportID = {
-    latitude: number
-    longitude: number
-}
+  latitude: number;
+  longitude: number;
+};
 
 export interface BaseForecastReport {
-    latitude: number
-    longitude: number
-    units: ForecastUnits
-    timezone: string
+  latitude: number;
+  longitude: number;
+  units: ForecastUnits;
+  timezone: string;
 }
 
 export interface ForecastReport extends BaseForecastReport {
-    hourly?: HourlyDataBlock
-    details?: HoursDataBlock
-    daily?: DailyDataBlock
+  hourly?: HourlyDataBlock;
+  details?: HoursDataBlock;
+  daily?: DailyDataBlock;
 }
 
 export enum ReportType {
-    Hourly = 'hourly',
-    Details = 'details',
-    Daily = 'daily',
+  Hourly = "hourly",
+  Details = "details",
+  Daily = "daily"
 }

@@ -1,2 +1,1 @@
-
-export type ForecastIcon = number
+export type ForecastIcon = number;

@@ -1,18 +1,17 @@
-
 export enum ForecastTimePeriod {
-    DAILY = 'daily',
-    HOURLY = 'hourly',
+  DAILY = "daily",
+  HOURLY = "hourly"
 }
 
 export interface GeoPoint {
-    latitude: number
-    longitude: number
+  latitude: number;
+  longitude: number;
 }
 
 export interface TimezoneGeoPoint extends GeoPoint {
-    timezone: string
+  timezone: string;
 }
 
 export enum ForecastUnits {
-    SI = 'si'
+  SI = "si"
 }

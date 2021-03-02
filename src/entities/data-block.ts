@@ -1,24 +1,28 @@
-
-import { DataPoint, DailyDataPoint, HourlyDataPoint, HoursDataPoint } from './data-point';
-import { ForecastIcon } from './icon';
+import {
+  DataPoint,
+  DailyDataPoint,
+  HourlyDataPoint,
+  HoursDataPoint
+} from "./data-point";
+import { ForecastIcon } from "./icon";
 
 export type DataBlock = DailyDataBlock | HourlyDataBlock | HoursDataBlock;
 
 export interface BaseDataBlock {
-    icon: ForecastIcon
-    night?: boolean
-    // summary?: string
-    data: DataPoint[]
+  icon: ForecastIcon;
+  night?: boolean;
+  // summary?: string
+  data: DataPoint[];
 }
 
 export interface HoursDataBlock extends BaseDataBlock {
-    data: HoursDataPoint[]
+  data: HoursDataPoint[];
 }
 
 export interface DailyDataBlock extends BaseDataBlock {
-    data: DailyDataPoint[]
+  data: DailyDataPoint[];
 }
 
 export interface HourlyDataBlock extends BaseDataBlock {
-    data: HourlyDataPoint[]
+  data: HourlyDataPoint[];
 }
