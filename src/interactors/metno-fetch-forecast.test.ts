@@ -2,7 +2,7 @@ import { MetnoFetchForecast } from "./metno-fetch-forecast";
 
 import test from "ava";
 
-const fetcher = new MetnoFetchForecast();
+const fetcher = new MetnoFetchForecast("ournet/1.0");
 const point = {
   latitude: 47.01,
   longitude: 28.52,

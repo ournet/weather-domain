@@ -2,7 +2,6 @@ const debug = require("debug")("weather-domain");
 var xml2js = require("xml2js");
 
 import fetch from "node-fetch";
-
 import { FetchForecast, FetchForecastResult } from "./fetch-forecast";
 import { TimezoneGeoPoint } from "../entities";
 import { GeoPoint, ForecastUnits } from "../entities/common";
@@ -11,10 +10,13 @@ import { ReportHelper } from "../entities/report-helper";
 import { HourlyDataBlock } from "../entities/data-block";
 
 export class MetnoFetchForecast extends FetchForecast {
+  constructor(private userAgent: string) {
+    super();
+  }
   protected innerExecute(
     params: TimezoneGeoPoint
   ): Promise<FetchForecastResult | null> {
-    return getMetnoData(params)
+    return getMetnoData(params, this.userAgent)
       .then((data) => formatData(data))
       .then((data) => {
         if (!data) {
@@ -100,12 +102,15 @@ function formatTimeItem(item: any) {
   return item;
 }
 
-function getMetnoData(geoPint: GeoPoint): Promise<any> {
+function getMetnoData(geoPint: GeoPoint, userAgent: string): Promise<any> {
   const url = `https://api.met.no/weatherapi/locationforecast/2.0/classic?lat=${geoPint.latitude};lon=${geoPint.longitude}`;
   const options = {
     timeout: 5000,
     method: "GET",
-    gzip: true
+    gzip: true,
+    headers: {
+      "user-agent": userAgent
+    }
   };
 
   return fetch(url, options)

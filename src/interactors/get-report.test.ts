@@ -6,7 +6,7 @@ import { MetnoFetchForecast } from "./metno-fetch-forecast";
 
 test("using buffer promise", async (t) => {
   const repo = new MockReportRepository();
-  const getReport = new GetReport(repo, repo, new MetnoFetchForecast());
+  const getReport = new GetReport(repo, repo, new MetnoFetchForecast("ournet-test/1.0"));
 
   const params1: TimezoneGeoPoint = {
     latitude: 1.1,
@@ -37,7 +37,7 @@ test("using buffer promise", async (t) => {
 
 test("destroy buffer promise", async (t) => {
   const repo = new MockReportRepository();
-  const getReport = new GetReport(repo, repo, new MetnoFetchForecast());
+  const getReport = new GetReport(repo, repo, new MetnoFetchForecast("ournet-test/1.0"));
   const params: TimezoneGeoPoint = {
     latitude: 1.1,
     longitude: 2.2,
