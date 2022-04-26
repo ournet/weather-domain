@@ -20,11 +20,9 @@ export class MetnoDataMapper {
     let sun: { sunrise: number; sunset: number } = { sunrise: 1, sunset: 1 };
 
     hours = hours || 300;
+    const nInput = input.filter((it) => it.symbol);
 
-    for (let i = 0; i < hours && i < input.length; i++) {
-      if (!input[i].symbol) {
-        continue;
-      }
+    for (let i = 0; i < hours && i < nInput.length; i++) {
       if (
         i === 0 ||
         ReportHelper.unixTimeToZoneDate(
@@ -32,13 +30,13 @@ export class MetnoDataMapper {
           params.timezone
         ).getDate() !==
           ReportHelper.unixTimeToZoneDate(
-            input[i].time,
+            nInput[i].time,
             params.timezone
           ).getDate()
       ) {
-        sun = ReportHelper.getSun(new Date(input[i].time * 1000), params);
+        sun = ReportHelper.getSun(new Date(nInput[i].time * 1000), params);
       }
-      const item = MetnoDataMapper.parseHourlyDataPoint(input[i], sun);
+      const item = MetnoDataMapper.parseHourlyDataPoint(nInput[i], sun);
       list.push(item);
     }
 
