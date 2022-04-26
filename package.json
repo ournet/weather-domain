@@ -1,6 +1,6 @@
 {
   "name": "@ournet/weather-domain",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "description": "Ournet weather domain",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",

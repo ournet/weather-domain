@@ -9,13 +9,14 @@
     "preserveConstEnums": true,
     "sourceMap": false,
     "moduleResolution": "node",
-    "declaration": false,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "allowJs": false,
     "strict": true,
     "lib": ["es6", "esnext.asynciterable"],
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "declaration": true,
+    "declarationDir": "lib"
   },
   "formatCodeOptions": {
     "indentSize": 2,
